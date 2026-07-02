@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>blue. — Arena de treino · Atalhos Comercial 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --azul:#7A9CC6;
+    --azul-forte:#4A6FA5;
+    --tinta:#22344A;
+    --creme:#FAF7F2;
+    --branco:#FFFFFF;
+    --areia:#E8E2D8;
+    --nevoa:#EEF2F7;
+    --ambar:#B98A1F;
+    --ambar-suave:#FBF3DF;
+    --verde:#5E8B6F;
+    --verde-suave:#EBF3EE;
+    --coral:#C05B4D;
+    --coral-suave:#F9ECEA;
+    --sombra:0 10px 30px rgba(34,52,74,.08);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Montserrat',sans-serif;background:var(--creme);color:var(--tinta);line-height:1.6;font-size:15px}
+  ::selection{background:var(--azul);color:#fff}
+  .wrap{max-width:860px;margin:0 auto;padding:0 24px}
+
+  header{background:linear-gradient(135deg,var(--tinta) 0%, #2E4A6B 60%, var(--azul-forte) 100%);color:#fff;padding:44px 0 96px;position:relative;overflow:hidden}
+  header::after{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;background:rgba(255,255,255,.05)}
+  header::before{content:"";position:absolute;left:-80px;bottom:-160px;width:320px;height:320px;border-radius:50%;background:rgba(122,156,198,.18)}
+  .marca{font-weight:800;font-size:30px;letter-spacing:-.5px}
+  .marca span{color:var(--azul)}
+  .eyebrow{text-transform:uppercase;letter-spacing:.28em;font-size:11px;font-weight:600;opacity:.75;margin:28px 0 10px}
+  h1{font-weight:800;font-size:clamp(26px,4vw,38px);line-height:1.12;letter-spacing:-1px}
+  .sub{margin-top:12px;font-weight:300;font-size:15px;opacity:.85;max-width:600px}
+  .voltar{display:inline-flex;align-items:center;gap:7px;margin-top:20px;color:#fff;text-decoration:none;font-size:12.5px;font-weight:700;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:8px 18px;transition:.2s;position:relative;z-index:2}
+  .voltar:hover{background:rgba(255,255,255,.28)}
+
+  /* ---------- PLACAR ---------- */
+  .placar{position:sticky;top:0;z-index:50;margin-top:-52px}
+  .placar-inner{background:var(--branco);border:1px solid var(--areia);border-radius:16px;box-shadow:var(--sombra);padding:14px 20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .stat{display:flex;flex-direction:column;min-width:70px}
+  .stat .v{font-weight:800;font-size:20px;color:var(--azul-forte);line-height:1.15}
+  .stat .l{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8A96A5}
+  .stat.fogo .v{color:var(--coral)}
+  .nivel-pill{margin-left:auto;font-size:12px;font-weight:800;color:var(--ambar);background:var(--ambar-suave);border-radius:99px;padding:6px 16px;white-space:nowrap}
+  .barra-xp{width:100%;height:7px;background:var(--nevoa);border-radius:99px;overflow:hidden}
+  .barra-xp div{height:100%;background:linear-gradient(90deg,var(--azul),var(--azul-forte));border-radius:99px;transition:width .5s ease;width:0%}
+
+  main{padding-bottom:60px}
+  section{margin:40px 0}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+  .sec-num{font-weight:800;font-size:13px;color:var(--azul);letter-spacing:.15em}
+  h2{font-weight:700;font-size:22px;letter-spacing:-.4px}
+  .sec-desc{color:#5C6B7E;font-weight:300;margin-bottom:20px;max-width:680px}
+
+  /* ---------- MENU DE MODOS ---------- */
+  .modos{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+  .modo{background:var(--branco);border:1px solid var(--areia);border-radius:18px;padding:24px 22px;cursor:pointer;transition:.2s;position:relative;overflow:hidden;text-align:left;font-family:inherit}
+  .modo:hover{border-color:var(--azul);transform:translateY(-3px);box-shadow:var(--sombra)}
+  .modo .emoji{font-size:30px}
+  .modo h3{font-size:16px;font-weight:800;margin:10px 0 4px}
+  .modo p{font-size:12.5px;color:#75828F;line-height:1.5}
+  .modo .selo-modo{position:absolute;top:14px;right:14px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border-radius:6px;padding:3px 9px}
+  .modo .selo-modo.facil{background:var(--verde-suave);color:var(--verde)}
+  .modo .selo-modo.medio{background:var(--ambar-suave);color:var(--ambar)}
+  .modo .selo-modo.dificil{background:var(--coral-suave);color:var(--coral)}
+  .modo .selo-modo.ia{background:var(--nevoa);color:var(--azul-forte)}
+  .modo .recorde{display:inline-block;margin-top:10px;font-size:11px;font-weight:700;color:var(--azul-forte);background:var(--nevoa);border-radius:6px;padding:2px 9px}
+
+  /* ---------- PALCO DO JOGO ---------- */
+  .palco{display:none;background:var(--branco);border:1px solid var(--areia);border-radius:22px;box-shadow:var(--sombra);padding:30px 28px;position:relative}
+  .palco.ativo{display:block}
+  .palco-top{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+  .palco-top h3{font-size:17px;font-weight:800;flex:1}
+  .palco-top .rodada{font-size:12px;font-weight:700;color:var(--azul-forte);background:var(--nevoa);border-radius:99px;padding:4px 14px;white-space:nowrap}
+  .palco-top .cronometro{font-size:14px;font-weight:800;color:var(--coral);background:var(--coral-suave);border-radius:99px;padding:4px 14px;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .sair{background:none;border:1px solid var(--areia);border-radius:99px;padding:5px 14px;font-family:inherit;font-size:11.5px;font-weight:700;color:#8A96A5;cursor:pointer;transition:.2s}
+  .sair:hover{border-color:var(--coral);color:var(--coral)}
+
+  .situacao{background:var(--creme);border:1px solid var(--areia);border-radius:16px;padding:20px 22px;margin-bottom:18px}
+  .situacao .rotulo{font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--azul);margin-bottom:6px}
+  .situacao .texto{font-size:16px;font-weight:600;line-height:1.5}
+  .situacao .etapa-dica{margin-top:8px;font-size:12px;color:#8A96A5}
+
+  .opcoes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:560px){.opcoes{grid-template-columns:1fr}}
+  .opcao{background:var(--branco);border:2px solid var(--areia);border-radius:13px;padding:14px 16px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:13.5px;font-weight:600;color:var(--azul-forte);cursor:pointer;transition:.15s;text-align:left;word-break:break-word}
+  .opcao:hover:not(:disabled){border-color:var(--azul);transform:translateY(-2px)}
+  .opcao:disabled{cursor:default}
+  .opcao.certa{border-color:var(--verde);background:var(--verde-suave);color:var(--verde)}
+  .opcao.errada{border-color:var(--coral);background:var(--coral-suave);color:var(--coral)}
+
+  .feedback{margin-top:16px;border-radius:0 10px 10px 0;padding:13px 16px;font-size:13px;display:none}
+  .feedback.on{display:block}
+  .feedback.ok{background:var(--verde-suave);border-left:3px solid var(--verde)}
+  .feedback.ok b{color:var(--verde)}
+  .feedback.erro{background:var(--coral-suave);border-left:3px solid var(--coral)}
+  .feedback.erro b{color:var(--coral)}
+  .feedback .cod{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;font-weight:600;color:var(--azul-forte);background:var(--nevoa);border-radius:6px;padding:2px 8px;white-space:nowrap}
+
+  .btn{background:var(--azul-forte);color:#fff;border:none;border-radius:12px;padding:12px 26px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:.2s}
+  .btn:hover{background:var(--tinta)}
+  .btn.fantasma{background:none;color:var(--azul-forte);border:1px solid var(--areia)}
+  .btn.fantasma:hover{border-color:var(--azul-forte);background:var(--nevoa)}
+  .acoes{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+
+  /* ---------- SEQUÊNCIA ---------- */
+  .seq-alvo,.seq-banco{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;border:2px dashed var(--areia);border-radius:14px;padding:10px;margin-bottom:12px;align-items:center}
+  .seq-alvo{background:var(--nevoa);border-color:var(--azul)}
+  .seq-rotulo{width:100%;font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8A96A5}
+  .peca{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12.5px;font-weight:600;color:var(--azul-forte);background:var(--branco);border:2px solid var(--areia);border-radius:9px;padding:7px 13px;cursor:pointer;transition:.15s}
+  .peca:hover{border-color:var(--azul);transform:translateY(-2px)}
+  .peca.na-resposta{background:var(--azul-forte);color:#fff;border-color:var(--azul-forte)}
+  .peca.certa{background:var(--verde);border-color:var(--verde);color:#fff}
+  .peca.errada{background:var(--coral);border-color:var(--coral);color:#fff}
+
+  /* ---------- SIMULADOR ---------- */
+  .chat{display:flex;flex-direction:column;gap:10px;max-height:380px;overflow-y:auto;background:var(--creme);border:1px solid var(--areia);border-radius:16px;padding:16px;margin-bottom:14px}
+  .chat .msg{max-width:86%;padding:11px 14px;border-radius:15px;font-size:13.5px;line-height:1.5;white-space:pre-wrap}
+  .chat .lead{align-self:flex-start;background:var(--branco);border:1px solid var(--areia);border-bottom-left-radius:5px}
+  .chat .maria{align-self:flex-end;background:var(--azul-forte);color:#fff;border-bottom-right-radius:5px}
+  .chat .coach{align-self:stretch;background:var(--ambar-suave);border-left:3px solid var(--ambar);border-radius:0 10px 10px 0;font-size:12.5px;max-width:100%}
+  .chat .coach b{color:var(--ambar)}
+  .chat .digitando{align-self:flex-start;color:#9AA7B6;font-style:italic;font-size:12.5px}
+  .sim-input{display:flex;gap:10px;align-items:flex-end}
+  .sim-input textarea{flex:1;border:1px solid var(--areia);border-radius:13px;padding:11px 14px;font-family:inherit;font-size:13.5px;color:var(--tinta);resize:none;outline:none;background:var(--branco);max-height:110px}
+  .sim-input textarea:focus{border-color:var(--azul)}
+  .sim-input .btn{padding:12px 20px}
+  .sim-aviso{margin-top:10px;font-size:11.5px;color:#8A96A5}
+  .sim-aviso a{color:var(--azul-forte);font-weight:700;cursor:pointer}
+
+  /* ---------- RESULTADO ---------- */
+  .resultado{text-align:center;padding:20px 10px}
+  .resultado .grande{font-size:52px}
+  .resultado h3{font-size:24px;font-weight:800;margin:10px 0 4px}
+  .resultado p{color:#5C6B7E;max-width:440px;margin:0 auto 6px}
+  .resultado .pontos-finais{font-size:34px;font-weight:800;color:var(--azul-forte);margin:12px 0}
+  .resultado .novo-recorde{display:inline-block;font-size:12px;font-weight:800;color:var(--ambar);background:var(--ambar-suave);border-radius:99px;padding:6px 18px;margin-bottom:10px}
+
+  footer{margin-top:50px;padding:30px 0;border-top:1px solid var(--areia);text-align:center;font-size:12px;color:#8A96A5}
+  footer .marca{font-size:18px;color:var(--tinta)}
+
+  @media (max-width:640px){
+    header{padding:36px 0 88px}
+    .palco{padding:22px 16px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="marca">blue<span>.</span></div>
+    <div class="eyebrow">Arena de treino · Comercial 1</div>
+    <h1>Treine os atalhos como um jogo 🎮</h1>
+    <p class="sub">Situações reais de atendimento, tempo, pontos e níveis. Quanto mais você treina aqui, mais rápido responde na vida real — e velocidade fecha venda.</p>
+    <a class="voltar" href="index.html">← Voltar ao playbook</a>
+  </div>
+</header>
+
+<div class="wrap placar">
+  <div class="placar-inner">
+    <div class="stat"><span class="v" id="pPontos">0</span><span class="l">Pontos</span></div>
+    <div class="stat fogo"><span class="v" id="pSeq">0 🔥</span><span class="l">Sequência</span></div>
+    <div class="stat"><span class="v" id="pAcertos">0%</span><span class="l">Precisão</span></div>
+    <span class="nivel-pill" id="pNivel">Nível 1 · Aprendiz</span>
+    <div class="barra-xp"><div id="pXp"></div></div>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= MENU ================= -->
+  <section id="menu">
+    <div class="sec-head"><span class="sec-num">MODOS</span><h2>Escolha seu treino</h2></div>
+    <p class="sec-desc">Cada modo treina um músculo diferente. Comece pela Jornada, evolua para o Relâmpago e, quando estiver afiada, enfrente a lead de IA no Simulador.</p>
+    <div class="modos">
+      <button class="modo" data-modo="jornada">
+        <span class="selo-modo facil">Base</span>
+        <span class="emoji">🗺️</span>
+        <h3>Jornada</h3>
+        <p>10 situações reais, sem tempo. Escolha o atalho certo e aprenda com o feedback de cada resposta.</p>
+        <span class="recorde" id="recJornada">Recorde: —</span>
+      </button>
+      <button class="modo" data-modo="relampago">
+        <span class="selo-modo medio">Velocidade</span>
+        <span class="emoji">⚡</span>
+        <h3>Relâmpago</h3>
+        <p>90 segundos no relógio. Acerte o máximo que conseguir — velocidade é o que fecha lead de tráfego.</p>
+        <span class="recorde" id="recRelampago">Recorde: —</span>
+      </button>
+      <button class="modo" data-modo="sequencia">
+        <span class="selo-modo dificil">Estratégia</span>
+        <span class="emoji">🧩</span>
+        <h3>Sequência perfeita</h3>
+        <p>Monte as receitas que convertem na ordem exata. Valor antes de preço, sempre.</p>
+        <span class="recorde" id="recSequencia">Recorde: —</span>
+      </button>
+      <button class="modo" data-modo="simulador">
+        <span class="selo-modo ia">Gemini ✨</span>
+        <span class="emoji">🤖</span>
+        <h3>Simulador de lead</h3>
+        <p>A IA vira uma lead de verdade — com dúvidas, objeções e pressa. Atenda, e o coach avalia cada resposta sua.</p>
+        <span class="recorde" id="recSimulador">Melhor nota: —</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= PALCO QUIZ (Jornada + Relâmpago) ================= -->
+  <section class="palco" id="palcoQuiz">
+    <div class="palco-top">
+      <h3 id="quizTitulo">Jornada</h3>
+      <span class="rodada" id="quizRodada">1 / 10</span>
+      <span class="cronometro" id="quizTempo" style="display:none">90s</span>
+      <button class="sair" data-sair>Sair</button>
+    </div>
+    <div class="situacao">
+      <div class="rotulo">Situação da lead</div>
+      <div class="texto" id="quizSituacao"></div>
+      <div class="etapa-dica" id="quizEtapa"></div>
+    </div>
+    <div class="opcoes" id="quizOpcoes"></div>
+    <div class="feedback" id="quizFeedback"></div>
+    <div class="acoes"><button class="btn" id="quizProxima" style="display:none">Próxima →</button></div>
+  </section>
+
+  <!-- ================= PALCO SEQUÊNCIA ================= -->
+  <section class="palco" id="palcoSeq">
+    <div class="palco-top">
+      <h3>Sequência perfeita</h3>
+      <span class="rodada" id="seqRodada">1 / 5</span>
+      <button class="sair" data-sair>Sair</button>
+    </div>
+    <div class="situacao">
+      <div class="rotulo">Monte a receita</div>
+      <div class="texto" id="seqNome"></div>
+      <div class="etapa-dica">Clique nos atalhos na ordem em que devem ser enviados. Clique de novo para tirar.</div>
+    </div>
+    <div class="seq-alvo" id="seqAlvo"><span class="seq-rotulo">Sua sequência</span></div>
+    <div class="seq-banco" id="seqBanco"><span class="seq-rotulo">Atalhos disponíveis</span></div>
+    <div class="feedback" id="seqFeedback"></div>
+    <div class="acoes">
+      <button class="btn" id="seqConferir">Conferir sequência</button>
+      <button class="btn" id="seqProxima" style="display:none">Próxima →</button>
+    </div>
+  </section>
+
+  <!-- ================= PALCO SIMULADOR ================= -->
+  <section class="palco" id="palcoSim">
+    <div class="palco-top">
+      <h3>Simulador de lead 🤖</h3>
+      <span class="rodada" id="simTrocas">0 / 8 mensagens</span>
+      <button class="sair" data-sair>Sair</button>
+    </div>
+    <div class="chat" id="simChat"></div>
+    <div class="sim-input">
+      <textarea id="simInput" rows="2" placeholder="Responda como responderia no WhatsApp… cite o atalho que usaria entre colchetes, ex.: [sobreorafa] + sua mensagem"></textarea>
+      <button class="btn" id="simEnviar">Enviar</button>
+    </div>
+    <div class="acoes">
+      <button class="btn fantasma" id="simEncerrar">Encerrar e receber a avaliação final</button>
+    </div>
+    <p class="sim-aviso" id="simAviso"></p>
+  </section>
+
+  <!-- ================= PALCO RESULTADO ================= -->
+  <section class="palco" id="palcoFim">
+    <div class="resultado">
+      <div class="grande" id="fimEmoji">🏆</div>
+      <h3 id="fimTitulo">Treino concluído!</h3>
+      <div class="pontos-finais" id="fimPontos">0 pts</div>
+      <span class="novo-recorde" id="fimRecorde" style="display:none">🌟 Novo recorde pessoal!</span>
+      <p id="fimMsg"></p>
+      <div class="acoes" style="justify-content:center">
+        <button class="btn" id="fimDeNovo">Jogar de novo</button>
+        <button class="btn fantasma" data-sair>Voltar ao menu</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="marca">blue<span style="color:var(--azul)">.</span></div>
+    <p style="margin-top:8px">Arena de treino · Blue Clínica — treinamento interno do time comercial</p>
+  </footer>
+</main>
+
+<script src="assets/atalhos.js"></script>
+<script src="assets/gemini.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const embaralha = arr => arr.slice().sort(()=>Math.random()-.5);
+
+  /* ================= PROGRESSO E PLACAR ================= */
+  const SALVO = 'blue_arena_progresso';
+  const NIVEIS = [
+    [0,    'Aprendiz'],
+    [300,  'Assistente'],
+    [800,  'Comercial'],
+    [1600, 'Closer'],
+    [2800, 'Elite blue.'],
+    [4500, 'Lenda do WhatsApp']
+  ];
+  let prog = { xp:0, recordes:{} };
+  try{ prog = Object.assign(prog, JSON.parse(localStorage.getItem(SALVO)||'{}')); }catch(e){}
+  function salvaProg(){ localStorage.setItem(SALVO, JSON.stringify(prog)); }
+
+  let pontos=0, sequencia=0, acertos=0, tentativas=0;
+
+  function nivelAtual(){
+    let n=0;
+    NIVEIS.forEach((nv,i)=>{ if(prog.xp>=nv[0]) n=i; });
+    return n;
+  }
+  function atualizaPlacar(){
+    $('pPontos').textContent = pontos;
+    $('pSeq').textContent = sequencia + ' 🔥';
+    $('pAcertos').textContent = tentativas ? Math.round(100*acertos/tentativas)+'%' : '0%';
+    const n = nivelAtual();
+    $('pNivel').textContent = 'Nível ' + (n+1) + ' · ' + NIVEIS[n][1];
+    const base = NIVEIS[n][0];
+    const alvo = NIVEIS[n+1] ? NIVEIS[n+1][0] : base+1;
+    $('pXp').style.width = Math.min(100, Math.round(100*(prog.xp-base)/(alvo-base))) + '%';
+  }
+  function ganhaPontos(qtd){
+    pontos += qtd;
+    prog.xp += qtd;
+    salvaProg();
+    atualizaPlacar();
+  }
+  function mostraRecordes(){
+    const r = prog.recordes;
+    $('recJornada').textContent   = 'Recorde: ' + (r.jornada   != null ? r.jornada+' pts'   : '—');
+    $('recRelampago').textContent = 'Recorde: ' + (r.relampago != null ? r.relampago+' pts' : '—');
+    $('recSequencia').textContent = 'Recorde: ' + (r.sequencia != null ? r.sequencia+' pts' : '—');
+    $('recSimulador').textContent = 'Melhor nota: ' + (r.simulador != null ? r.simulador+'/10' : '—');
+  }
+
+  /* ================= NAVEGAÇÃO ENTRE PALCOS ================= */
+  const palcos = ['menu','palcoQuiz','palcoSeq','palcoSim','palcoFim'];
+  let cronometro = null;
+  function mostra(id){
+    if(cronometro){ clearInterval(cronometro); cronometro=null; }
+    palcos.forEach(p=>{
+      const el = $(p);
+      if(p==='menu') el.style.display = (p===id)?'':'none';
+      else el.classList.toggle('ativo', p===id);
+    });
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  document.querySelectorAll('[data-sair]').forEach(b=>b.addEventListener('click', ()=>{ mostraRecordes(); mostra('menu'); }));
+
+  let modoAtual = null;
+  document.querySelectorAll('.modo').forEach(m=>{
+    m.addEventListener('click', ()=>{
+      modoAtual = m.dataset.modo;
+      pontos=0; sequencia=0; acertos=0; tentativas=0;
+      atualizaPlacar();
+      if(modoAtual==='jornada')   comecaQuiz(false);
+      if(modoAtual==='relampago') comecaQuiz(true);
+      if(modoAtual==='sequencia') comecaSeq();
+      if(modoAtual==='simulador') comecaSim();
+    });
+  });
+
+  function terminaJogo(chave, valor, unidade, titulo, msg, emoji){
+    const antigo = prog.recordes[chave];
+    const recorde = (antigo==null || valor>antigo);
+    if(recorde){ prog.recordes[chave]=valor; salvaProg(); }
+    $('fimEmoji').textContent = emoji;
+    $('fimTitulo').textContent = titulo;
+    $('fimPontos').textContent = valor + ' ' + unidade;
+    $('fimRecorde').style.display = recorde ? 'inline-block' : 'none';
+    $('fimMsg').textContent = msg;
+    mostra('palcoFim');
+  }
+  $('fimDeNovo').addEventListener('click', ()=>{
+    pontos=0; sequencia=0; acertos=0; tentativas=0;
+    atualizaPlacar();
+    if(modoAtual==='jornada')   comecaQuiz(false);
+    else if(modoAtual==='relampago') comecaQuiz(true);
+    else if(modoAtual==='sequencia') comecaSeq();
+    else if(modoAtual==='simulador') comecaSim();
+  });
+
+  /* ================= QUIZ (Jornada / Relâmpago) ================= */
+  const A = window.ATALHOS, ET = window.ETAPAS;
+  let fila=[], rodada=0, totalRodadas=10, tempoRestante=0, modoTempo=false, travado=false;
+
+  function novaFila(){
+    fila = embaralha(A);
+  }
+  function comecaQuiz(comTempo){
+    modoTempo = comTempo;
+    rodada = 0;
+    totalRodadas = comTempo ? Infinity : 10;
+    novaFila();
+    $('quizTitulo').textContent = comTempo ? 'Relâmpago ⚡' : 'Jornada 🗺️';
+    $('quizTempo').style.display = comTempo ? '' : 'none';
+    if(comTempo){
+      tempoRestante = 90;
+      $('quizTempo').textContent = tempoRestante+'s';
+      cronometro = setInterval(()=>{
+        tempoRestante--;
+        $('quizTempo').textContent = tempoRestante+'s';
+        if(tempoRestante<=0){
+          clearInterval(cronometro); cronometro=null;
+          terminaJogo('relampago', pontos, 'pts', 'Tempo esgotado!',
+            'Você fez ' + acertos + ' acertos em ' + tentativas + ' tentativas. Velocidade com precisão é o que fecha lead de tráfego — repita amanhã e tente se superar.', '⚡');
+        }
+      }, 1000);
+    }
+    mostra('palcoQuiz');
+    proximaPergunta();
+  }
+
+  function proximaPergunta(){
+    travado = false;
+    if(!modoTempo && rodada>=totalRodadas){
+      terminaJogo('jornada', pontos, 'pts', 'Jornada concluída!',
+        'Precisão de ' + Math.round(100*acertos/Math.max(1,tentativas)) + '%. Refaça a jornada até chegar em 100% — na vida real, cada erro é uma lead esfriando.', '🗺️');
+      return;
+    }
+    if(fila.length===0) novaFila();
+    const alvo = fila.pop();
+    rodada++;
+    $('quizRodada').textContent = modoTempo ? (tentativas+1)+'ª pergunta' : rodada + ' / ' + totalRodadas;
+    $('quizSituacao').textContent = alvo.q;
+    $('quizEtapa').textContent = 'Etapa ' + alvo.e + ' · ' + ET[alvo.e].nome;
+    $('quizFeedback').className = 'feedback';
+    $('quizProxima').style.display = 'none';
+
+    // Distratores: prioriza atalhos da mesma etapa (mais difíceis de distinguir)
+    const mesmos = embaralha(A.filter(x=>x.e===alvo.e && x.c!==alvo.c));
+    const outros = embaralha(A.filter(x=>x.e!==alvo.e));
+    const distratores = mesmos.concat(outros).slice(0,3);
+    const opcoes = embaralha([alvo].concat(distratores));
+
+    const box = $('quizOpcoes');
+    box.innerHTML='';
+    opcoes.forEach(op=>{
+      const b = document.createElement('button');
+      b.className='opcao';
+      b.textContent = op.c;
+      b.addEventListener('click', ()=>responde(b, op, alvo, box));
+      box.appendChild(b);
+    });
+  }
+
+  function responde(botao, escolha, alvo, box){
+    if(travado) return;
+    travado = true;
+    tentativas++;
+    Array.from(box.children).forEach(b=>{ b.disabled=true; if(b.textContent===alvo.c) b.classList.add('certa'); });
+    const fb = $('quizFeedback');
+    if(escolha.c===alvo.c){
+      acertos++;
+      sequencia++;
+      const bonus = Math.min(sequencia,5)*5;
+      ganhaPontos(20+bonus);
+      fb.className='feedback on ok';
+      fb.innerHTML = '<b>Acertou! +'+(20+bonus)+' pts.</b> ' + dicaDe(alvo);
+    } else {
+      sequencia=0;
+      botao.classList.add('errada');
+      atualizaPlacar();
+      fb.className='feedback on erro';
+      fb.innerHTML = '<b>Quase.</b> O certo aqui é <span class="cod">'+alvo.c+'</span> — ' + alvo.q.charAt(0).toLowerCase() + alvo.q.slice(1) + '.';
+    }
+    if(modoTempo){
+      setTimeout(()=>{ if(cronometro) proximaPergunta(); }, escolha.c===alvo.c ? 700 : 1600);
+    } else {
+      $('quizProxima').style.display='inline-block';
+    }
+  }
+  $('quizProxima').addEventListener('click', proximaPergunta);
+
+  function dicaDe(a){
+    const dicas = {
+      6: 'Lembre: valor antes de preço, e nunca deixe o valor ser a última mensagem.',
+      7: 'Método A-R-A: Acolhe, Resgata a dor dela, Avança.',
+      9: 'Pix enviado sem cair em 2 horas merece um toque leve.',
+      10:'Depois do pagamento: Pósagendamento → exames → questionário, em sequência.',
+      11:'Confirmação e termodeautorização andam JUNTOS, sempre.',
+      12:'A fortuna está no follow-up: a maioria das vendas vem depois do 5º contato.'
+    };
+    return dicas[a.e] || ('Etapa ' + a.e + ' · ' + ET[a.e].nome + '.');
+  }
+
+  /* ================= SEQUÊNCIA PERFEITA ================= */
+  let seqFila=[], seqRodada=0, seqAtual=null, seqResposta=[];
+
+  function comecaSeq(){
+    seqFila = embaralha(window.RECEITAS);
+    seqRodada = 0;
+    mostra('palcoSeq');
+    proximaSeq();
+  }
+  function proximaSeq(){
+    if(seqRodada>=window.RECEITAS.length){
+      terminaJogo('sequencia', pontos, 'pts', 'Estrategista!',
+        'Você montou as ' + window.RECEITAS.length + ' receitas do playbook. Ordem certa = conversa que flui sozinha.', '🧩');
+      return;
+    }
+    seqAtual = seqFila[seqRodada];
+    seqRodada++;
+    seqResposta = [];
+    $('seqRodada').textContent = seqRodada + ' / ' + window.RECEITAS.length;
+    $('seqNome').textContent = seqAtual.nome;
+    $('seqFeedback').className='feedback';
+    $('seqConferir').style.display='inline-block';
+    $('seqProxima').style.display='none';
+    desenhaSeq(embaralha(seqAtual.seq));
+  }
+  function desenhaSeq(banco){
+    const alvo = $('seqAlvo'), bco = $('seqBanco');
+    alvo.innerHTML = '<span class="seq-rotulo">Sua sequência</span>';
+    bco.innerHTML = '<span class="seq-rotulo">Atalhos disponíveis</span>';
+    seqResposta.forEach((c,ix)=>{
+      const p = document.createElement('button');
+      p.className='peca na-resposta';
+      p.textContent = (ix+1)+'. '+c;
+      p.addEventListener('click', ()=>{
+        seqResposta.splice(ix,1);
+        desenhaSeq(seqAtual.seq.filter(x=>!seqResposta.includes(x)));
+      });
+      alvo.appendChild(p);
+    });
+    banco.filter(c=>!seqResposta.includes(c)).forEach(c=>{
+      const p = document.createElement('button');
+      p.className='peca';
+      p.textContent = c;
+      p.addEventListener('click', ()=>{
+        seqResposta.push(c);
+        desenhaSeq(seqAtual.seq.filter(x=>!seqResposta.includes(x)));
+      });
+      bco.appendChild(p);
+    });
+  }
+  $('seqConferir').addEventListener('click', ()=>{
+    const fb = $('seqFeedback');
+    if(seqResposta.length!==seqAtual.seq.length){
+      fb.className='feedback on erro';
+      fb.innerHTML='<b>Faltam atalhos.</b> Use todos os disponíveis antes de conferir.';
+      return;
+    }
+    tentativas++;
+    const certos = seqResposta.filter((c,i)=>c===seqAtual.seq[i]).length;
+    const perfeito = certos===seqAtual.seq.length;
+    // pinta as peças
+    Array.from($('seqAlvo').querySelectorAll('.peca')).forEach((p,i)=>{
+      p.classList.add(seqResposta[i]===seqAtual.seq[i]?'certa':'errada');
+    });
+    if(perfeito){
+      acertos++;
+      sequencia++;
+      ganhaPontos(60);
+      fb.className='feedback on ok';
+      fb.innerHTML='<b>Sequência perfeita! +60 pts.</b> É exatamente assim que a conversa converte.';
+    } else {
+      sequencia=0;
+      ganhaPontos(certos*5);
+      atualizaPlacar();
+      fb.className='feedback on erro';
+      fb.innerHTML='<b>'+certos+' de '+seqAtual.seq.length+' na posição certa.</b> A ordem correta é: '
+        + seqAtual.seq.map(c=>'<span class="cod">'+c+'</span>').join(' → ');
+    }
+    $('seqConferir').style.display='none';
+    $('seqProxima').style.display='inline-block';
+  });
+  $('seqProxima').addEventListener('click', proximaSeq);
+
+  /* ================= SIMULADOR DE LEAD (Gemini) ================= */
+  const PERFIS = [
+    'Você é a Camila, 34 anos, do Rio de Janeiro. Veio de um anúncio do Instagram. Sente as pernas pesadas há anos, já fez muita dieta sem resultado e desconfia de lipedema, mas nunca teve diagnóstico. É insegura e pergunta o preço cedo demais.',
+    'Você é a Renata, 41 anos, de Recife. Já tem diagnóstico de lipedema. Está muito interessada mas assustada com a distância e com o valor. Vai dizer "está caro" pelo menos uma vez.',
+    'Você é a Juliana, 29 anos, de São Paulo. Pesquisou várias clínicas e está comparando. Pergunta se aceita plano de saúde e quanto custa a cirurgia. Se for bem atendida, pede para agendar.',
+    'Você é a Patrícia, 38 anos, de Goiânia. Conversou com a clínica há um mês e sumiu. Está retornando agora, meio fria, dizendo "vou pensar" com frequência. Só avança se sentir acolhimento de verdade.'
+  ];
+  const SIM_REGRAS = [
+    'MODO SIMULADOR DE TREINO: você vai interpretar UMA lead conversando por WhatsApp com a Maria (comercial da Clínica Blue).',
+    'Responda SEMPRE neste formato JSON puro, sem markdown, sem crase: {"lead":"mensagem da lead","coach":"análise curta da última resposta da Maria","nota":0}',
+    '- "lead": a próxima mensagem da lead (natural, humana, curta como no WhatsApp, com a personalidade do perfil).',
+    '- "coach": 1 a 2 frases avaliando a última resposta da Maria segundo o playbook (atalho certo? terminou com pergunta? valor antes de preço? personalizou?). Na primeira mensagem, deixe "".',
+    '- "nota": de 0 a 10 para a última resposta da Maria (0 na primeira mensagem).',
+    'A lead NÃO conhece os atalhos — reaja apenas ao conteúdo. Se a Maria citar um atalho entre colchetes, trate como se ela tivesse enviado o texto daquele modelo.',
+    'Nunca saia do personagem no campo "lead".'
+  ].join('\n');
+
+  let simHist=[], simTrocas=0, simNotas=[], simPerfil='';
+
+  function simBolha(texto, classe){
+    const div = document.createElement('div');
+    div.className = 'msg ' + classe;
+    if(classe==='coach') div.innerHTML = '<b>Coach:</b> ' + texto.replace(/[&<>]/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]));
+    else div.textContent = texto;
+    $('simChat').appendChild(div);
+    $('simChat').scrollTop = $('simChat').scrollHeight;
+    return div;
+  }
+
+  function parseSim(txt){
+    try{
+      const ini = txt.indexOf('{'), fim = txt.lastIndexOf('}');
+      return JSON.parse(txt.slice(ini, fim+1));
+    }catch(e){
+      return { lead: txt.trim(), coach:'', nota:null };
+    }
+  }
+
+  async function comecaSim(){
+    mostra('palcoSim');
+    $('simChat').innerHTML='';
+    simHist=[]; simTrocas=0; simNotas=[];
+    simPerfil = PERFIS[Math.floor(Math.random()*PERFIS.length)];
+    $('simTrocas').textContent='0 / 8 mensagens';
+    const status = await window.GeminiBlue.statusConexao();
+    if(status==='off'){
+      $('simAviso').innerHTML='O simulador precisa da IA. <a id="simChave">Clique aqui para configurar a chave do Gemini</a> ou publique no Netlify com a variável GEMINI_API_KEY.';
+      document.getElementById('simChave').addEventListener('click', ()=>{ window.GeminiBlue.configurarChave(); comecaSim(); });
+      simBolha('Sem conexão com a IA por enquanto. Configure a chave ali embaixo e recomece o simulador. 💙','coach');
+      return;
+    }
+    $('simAviso').textContent='Dica: cite o atalho que usaria entre colchetes, ex.: [empatia] + sua mensagem personalizada.';
+    const digitando = simBolha('A lead está entrando na conversa…','digitando');
+    try{
+      const resposta = await window.GeminiBlue.perguntar(
+        'Comece a conversa: envie a PRIMEIRA mensagem da lead chegando no WhatsApp da clínica.',
+        [], SIM_REGRAS + '\n\nPERFIL DA LEAD:\n' + simPerfil
+      );
+      digitando.remove();
+      const r = parseSim(resposta);
+      simBolha(r.lead, 'lead');
+      simHist.push({eu:'(início da conversa)', bot:resposta});
+    }catch(err){
+      digitando.remove();
+      simBolha('Não consegui iniciar a conversa: ' + err.message, 'coach');
+    }
+  }
+
+  async function simEnviar(){
+    const txt = $('simInput').value.trim();
+    if(!txt || simTrocas>=8) return;
+    $('simInput').value='';
+    $('simEnviar').disabled=true;
+    simBolha(txt, 'maria');
+    simTrocas++;
+    $('simTrocas').textContent = simTrocas + ' / 8 mensagens';
+    const digitando = simBolha('digitando…','digitando');
+    try{
+      const resposta = await window.GeminiBlue.perguntar(
+        'Resposta da Maria: ' + txt,
+        simHist, SIM_REGRAS + '\n\nPERFIL DA LEAD:\n' + simPerfil
+      );
+      digitando.remove();
+      const r = parseSim(resposta);
+      if(r.coach) simBolha(r.coach, 'coach');
+      if(typeof r.nota==='number' && r.nota>0){
+        simNotas.push(r.nota);
+        tentativas++;
+        if(r.nota>=7){ acertos++; sequencia++; ganhaPontos(r.nota*3); }
+        else { sequencia=0; ganhaPontos(r.nota); }
+      }
+      simBolha(r.lead, 'lead');
+      simHist.push({eu:'Resposta da Maria: '+txt, bot:resposta});
+      if(simHist.length>10) simHist.shift();
+      if(simTrocas>=8) encerraSim();
+    }catch(err){
+      digitando.remove();
+      simBolha('Erro ao falar com a IA: ' + err.message, 'coach');
+    }
+    $('simEnviar').disabled=false;
+    $('simInput').focus();
+  }
+  $('simEnviar').addEventListener('click', simEnviar);
+  $('simInput').addEventListener('keydown', e=>{
+    if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); simEnviar(); }
+  });
+  function encerraSim(){
+    const media = simNotas.length ? Math.round(10*simNotas.reduce((a,b)=>a+b,0)/simNotas.length)/10 : 0;
+    terminaJogo('simulador', media, '/10', 'Atendimento avaliado!',
+      simNotas.length
+        ? 'Nota média do coach nas suas ' + simNotas.length + ' respostas. Acima de 8 é atendimento de elite — abaixo disso, revise as regras de ouro e tente outro perfil de lead.'
+        : 'A conversa terminou antes de o coach avaliar respostas. Tente de novo!',
+      media>=8 ? '🏆' : media>=6 ? '💪' : '📚');
+  }
+  $('simEncerrar').addEventListener('click', encerraSim);
+
+  /* ================= INÍCIO ================= */
+  mostraRecordes();
+  atualizaPlacar();
+})();
+</script>
+</body>
+</html>

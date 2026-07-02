@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>blue. — Playbook Comercial 1 · Atalhos & método</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --azul:#7A9CC6;
+    --azul-forte:#4A6FA5;
+    --tinta:#22344A;
+    --creme:#FAF7F2;
+    --branco:#FFFFFF;
+    --areia:#E8E2D8;
+    --nevoa:#EEF2F7;
+    --ambar:#B98A1F;
+    --ambar-suave:#FBF3DF;
+    --verde:#5E8B6F;
+    --verde-suave:#EBF3EE;
+    --coral:#C05B4D;
+    --coral-suave:#F9ECEA;
+    --sombra:0 10px 30px rgba(34,52,74,.08);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Montserrat',sans-serif;background:var(--creme);color:var(--tinta);line-height:1.6;font-size:15px}
+  ::selection{background:var(--azul);color:#fff}
+
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+
+  /* ---------- HEADER ---------- */
+  header{background:linear-gradient(135deg,var(--tinta) 0%, #2E4A6B 60%, var(--azul-forte) 100%);color:#fff;padding:56px 0 120px;position:relative;overflow:hidden}
+  header::after{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;background:rgba(255,255,255,.05)}
+  header::before{content:"";position:absolute;left:-80px;bottom:-160px;width:320px;height:320px;border-radius:50%;background:rgba(122,156,198,.18)}
+  .marca{font-weight:800;font-size:30px;letter-spacing:-.5px}
+  .marca span{color:var(--azul)}
+  .eyebrow{text-transform:uppercase;letter-spacing:.28em;font-size:11px;font-weight:600;opacity:.75;margin:34px 0 10px}
+  h1{font-weight:800;font-size:clamp(28px,4.4vw,44px);line-height:1.12;letter-spacing:-1px;max-width:720px}
+  .sub{margin-top:16px;font-weight:300;font-size:16px;opacity:.85;max-width:640px}
+  .sub b{font-weight:600}
+
+  /* ---------- BUSCA ---------- */
+  .busca-caixa{position:sticky;top:0;z-index:50;margin-top:-58px}
+  .busca-inner{background:var(--branco);border:1px solid var(--areia);border-radius:16px;box-shadow:var(--sombra);padding:16px 20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .busca-inner input{flex:1;min-width:220px;border:none;outline:none;font-family:inherit;font-size:16px;color:var(--tinta);background:transparent}
+  .busca-inner input::placeholder{color:#9AA7B6}
+  .lupa{width:20px;height:20px;flex-shrink:0;stroke:var(--azul-forte)}
+  .contador{font-size:12px;font-weight:600;color:var(--azul-forte);background:var(--nevoa);border-radius:99px;padding:4px 12px;white-space:nowrap}
+  .dica-tecla{font-size:11px;color:#9AA7B6;white-space:nowrap}
+  .dica-tecla kbd{background:var(--nevoa);border:1px solid var(--areia);border-radius:5px;padding:1px 7px;font-family:inherit;font-weight:600}
+  .busca-zero{display:none;width:100%;padding-top:10px;border-top:1px dashed var(--nevoa);font-size:13px;color:#75828F;align-items:center;gap:10px;flex-wrap:wrap}
+  .busca-zero.on{display:flex}
+  .busca-zero button{background:var(--azul-forte);color:#fff;border:none;border-radius:99px;padding:7px 16px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:.2s}
+  .busca-zero button:hover{background:var(--tinta)}
+
+  /* ---------- NAV ---------- */
+  nav{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 0}
+  nav a{font-size:12px;font-weight:600;color:var(--azul-forte);background:var(--branco);border:1px solid var(--areia);border-radius:99px;padding:7px 14px;text-decoration:none;transition:.2s}
+  nav a:hover,nav a:focus-visible{background:var(--azul-forte);color:#fff;border-color:var(--azul-forte);outline:none}
+  nav a.nav-jogo{background:var(--ambar);color:#fff;border-color:var(--ambar);font-weight:700}
+  nav a.nav-jogo:hover{background:#9A7318;border-color:#9A7318}
+
+  /* ---------- SEÇÕES ---------- */
+  section{margin:56px 0}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+  .sec-num{font-weight:800;font-size:13px;color:var(--azul);letter-spacing:.15em}
+  h2{font-weight:700;font-size:24px;letter-spacing:-.4px}
+  .sec-desc{color:#5C6B7E;font-weight:300;margin-bottom:22px;max-width:720px}
+
+  /* ---------- JORNADA ---------- */
+  .jornada{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;counter-reset:passo}
+  .passo{background:var(--branco);border:1px solid var(--areia);border-radius:14px;padding:16px 14px;position:relative;text-decoration:none;color:var(--tinta);transition:.2s;counter-increment:passo}
+  .passo::before{content:counter(passo,decimal-leading-zero);font-size:11px;font-weight:800;color:var(--azul);letter-spacing:.1em}
+  .passo:hover{border-color:var(--azul);transform:translateY(-3px);box-shadow:var(--sombra)}
+  .passo h3{font-size:13.5px;font-weight:700;margin:6px 0 4px;line-height:1.3}
+  .passo p{font-size:11.5px;color:#75828F;line-height:1.45}
+  .passo .tag{display:inline-block;margin-top:8px;font-size:10.5px;font-weight:700;color:var(--azul-forte);background:var(--nevoa);border-radius:6px;padding:2px 8px;font-family:ui-monospace,'SF Mono',Menlo,monospace}
+
+  /* ---------- CARDS DE ETAPA / ATALHOS ---------- */
+  .etapa{background:var(--branco);border:1px solid var(--areia);border-radius:18px;padding:26px 26px 18px;margin-bottom:20px;box-shadow:0 2px 10px rgba(34,52,74,.04)}
+  .etapa-head{display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap}
+  .etapa-head h3{font-size:17px;font-weight:700}
+  .fase{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:6px;padding:3px 10px}
+  .fase.abertura{background:var(--nevoa);color:var(--azul-forte)}
+  .fase.meio{background:#EFF6EE;color:var(--verde)}
+  .fase.fechamento{background:var(--ambar-suave);color:var(--ambar)}
+  .fase.pos{background:#F2EEF9;color:#6B5B95}
+  .etapa .quando{font-size:13px;color:#5C6B7E;font-weight:300;margin-bottom:16px}
+
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8A96A5;padding:8px 10px;border-bottom:2px solid var(--nevoa)}
+  td{padding:11px 10px;border-bottom:1px solid var(--nevoa);vertical-align:top;font-size:13.5px}
+  tr:last-child td{border-bottom:none}
+  tr.atalho-row{transition:.15s}
+  tr.atalho-row.hit{background:var(--ambar-suave)}
+  tr.atalho-row.miss{display:none}
+  .cod{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12.5px;font-weight:600;color:var(--azul-forte);background:var(--nevoa);border-radius:7px;padding:3px 9px;display:inline-block;margin:2px 3px 2px 0;white-space:nowrap}
+
+  .sdr-tip{margin-top:14px;background:var(--verde-suave);border-left:3px solid var(--verde);border-radius:0 10px 10px 0;padding:13px 16px;font-size:13px}
+  .sdr-tip b{color:var(--verde)}
+  .alerta{margin-top:14px;background:var(--coral-suave);border-left:3px solid var(--coral);border-radius:0 10px 10px 0;padding:13px 16px;font-size:13px}
+  .alerta b{color:var(--coral)}
+
+  /* ---------- REGRAS DE OURO ---------- */
+  .regras{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+  .regra{background:var(--tinta);color:#fff;border-radius:16px;padding:22px 20px;position:relative;overflow:hidden}
+  .regra::after{content:"";position:absolute;right:-40px;bottom:-40px;width:120px;height:120px;border-radius:50%;background:rgba(122,156,198,.15)}
+  .regra .num{font-size:26px;font-weight:800;color:var(--azul)}
+  .regra h3{font-size:14.5px;font-weight:700;margin:8px 0 6px}
+  .regra p{font-size:12.5px;font-weight:300;opacity:.85;line-height:1.55}
+
+  /* ---------- CHECKLIST CONFIRMAÇÃO (assinatura visual) ---------- */
+  .confirma{background:linear-gradient(135deg,#FFFDF7,var(--ambar-suave));border:2px solid var(--ambar);border-radius:22px;padding:34px 30px;box-shadow:var(--sombra)}
+  .confirma .selo{display:inline-flex;align-items:center;gap:8px;background:var(--ambar);color:#fff;font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;border-radius:99px;padding:7px 16px;margin-bottom:16px}
+  .confirma h2{font-size:26px;margin-bottom:8px}
+  .confirma .quando-roda{font-size:13.5px;color:#7A6A3E;margin-bottom:22px;font-weight:500}
+  .check-lista{display:flex;flex-direction:column;gap:10px}
+  .check-item{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid #EDE3C8;border-radius:14px;padding:15px 18px;cursor:pointer;transition:.2s;user-select:none}
+  .check-item:hover{border-color:var(--ambar)}
+  .check-item.feito{opacity:.55}
+  .check-item.feito .ck{background:var(--verde);border-color:var(--verde)}
+  .check-item.feito .ck::after{opacity:1}
+  .ck{width:24px;height:24px;flex-shrink:0;border:2px solid var(--areia);border-radius:8px;background:#fff;position:relative;margin-top:2px;transition:.2s}
+  .ck::after{content:"";position:absolute;inset:0;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>') center/70% no-repeat;opacity:0;transition:.2s}
+  .check-item h4{font-size:14.5px;font-weight:700;margin-bottom:2px}
+  .check-item p{font-size:12.5px;color:#75828F;line-height:1.5}
+  .check-item.termo{border:2px solid var(--coral);background:var(--coral-suave)}
+  .check-item.termo h4{color:var(--coral)}
+  .reset-check{margin-top:16px;background:none;border:1px solid var(--areia);border-radius:99px;padding:7px 16px;font-family:inherit;font-size:12px;font-weight:600;color:#8A96A5;cursor:pointer}
+  .reset-check:hover{border-color:var(--azul-forte);color:var(--azul-forte)}
+
+  /* ---------- CADÊNCIA ---------- */
+  .cadencia{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+  .cad-card{background:var(--branco);border:1px solid var(--areia);border-radius:16px;padding:22px;border-top:5px solid var(--azul)}
+  .cad-card.quente{border-top-color:var(--coral)}
+  .cad-card.morno{border-top-color:var(--ambar)}
+  .cad-card.frio{border-top-color:var(--azul)}
+  .cad-card h3{font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+  .cad-card .def{font-size:12px;color:#75828F;margin-bottom:14px}
+  .cad-card ol{list-style:none}
+  .cad-card li{font-size:13px;padding:8px 0;border-bottom:1px dashed var(--nevoa);display:flex;gap:10px}
+  .cad-card li:last-child{border-bottom:none}
+  .cad-card li .t{font-weight:800;font-size:11px;color:var(--azul-forte);background:var(--nevoa);border-radius:6px;padding:2px 8px;height:fit-content;white-space:nowrap;margin-top:1px}
+
+  /* ---------- ROTINA ---------- */
+  .rotina{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+  .turno{background:var(--branco);border:1px solid var(--areia);border-radius:16px;padding:22px}
+  .turno h3{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .turno h3 .hora{font-size:11px;font-weight:700;color:var(--azul-forte);background:var(--nevoa);border-radius:6px;padding:2px 8px}
+  .turno ul{list-style:none}
+  .turno li{font-size:13px;padding:7px 0 7px 20px;position:relative;border-bottom:1px dashed var(--nevoa)}
+  .turno li:last-child{border-bottom:none}
+  .turno li::before{content:"";position:absolute;left:0;top:14px;width:8px;height:8px;border-radius:50%;background:var(--azul)}
+
+  /* ---------- RECEITAS ---------- */
+  .receita{background:var(--branco);border:1px solid var(--areia);border-radius:16px;padding:22px 24px;margin-bottom:14px}
+  .receita h3{font-size:15px;font-weight:700;margin-bottom:12px}
+  .fluxo{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .fluxo .cod{margin:0}
+  .fluxo .seta{color:#B6C1CE;font-weight:700}
+  .fluxo .nota{font-size:12px;color:#75828F;font-style:italic;width:100%;margin-top:6px}
+
+  /* ---------- ERROS ---------- */
+  .erros{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+  .erro{background:var(--branco);border:1px solid var(--areia);border-radius:16px;padding:20px 22px}
+  .erro .x{color:var(--coral);font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+  .erro .v{color:var(--verde);font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+  .erro p{font-size:13px;margin-top:4px}
+  .erro hr{border:none;border-top:1px dashed var(--nevoa);margin:12px 0}
+
+  footer{margin-top:70px;padding:34px 0;border-top:1px solid var(--areia);text-align:center;font-size:12px;color:#8A96A5}
+  footer .marca{font-size:18px;color:var(--tinta)}
+
+  /* ---------- ASSISTENTE IA (Gemini) ---------- */
+  .ia-btn{position:fixed;right:22px;bottom:22px;z-index:90;background:linear-gradient(135deg,var(--tinta),var(--azul-forte));color:#fff;border:none;border-radius:99px;padding:14px 22px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 12px 32px rgba(34,52,74,.35);display:flex;align-items:center;gap:9px;transition:.25s}
+  .ia-btn:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(34,52,74,.45)}
+  .ia-btn .brilho{font-size:16px}
+  .ia-painel{position:fixed;right:22px;bottom:22px;z-index:95;width:min(420px,calc(100vw - 32px));height:min(620px,calc(100vh - 60px));background:var(--branco);border:1px solid var(--areia);border-radius:22px;box-shadow:0 24px 60px rgba(34,52,74,.3);display:none;flex-direction:column;overflow:hidden}
+  .ia-painel.aberto{display:flex}
+  .ia-head{background:linear-gradient(135deg,var(--tinta),var(--azul-forte));color:#fff;padding:16px 20px;display:flex;align-items:center;gap:10px}
+  .ia-head .titulo{font-weight:800;font-size:15px;flex:1}
+  .ia-head .titulo small{display:block;font-weight:400;font-size:11px;opacity:.75}
+  .ia-head button{background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:9px;cursor:pointer;font-size:14px;font-family:inherit;transition:.2s}
+  .ia-head button:hover{background:rgba(255,255,255,.3)}
+  .ia-corpo{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;background:var(--creme)}
+  .ia-msg{max-width:88%;padding:12px 15px;border-radius:16px;font-size:13.5px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
+  .ia-msg.eu{align-self:flex-end;background:var(--azul-forte);color:#fff;border-bottom-right-radius:5px}
+  .ia-msg.bot{align-self:flex-start;background:var(--branco);border:1px solid var(--areia);border-bottom-left-radius:5px}
+  .ia-msg.bot .cod{font-size:12px}
+  .ia-msg.pensando{align-self:flex-start;background:var(--branco);border:1px solid var(--areia);color:#9AA7B6;font-style:italic}
+  .ia-sugestoes{display:flex;flex-wrap:wrap;gap:6px}
+  .ia-sugestoes button{background:var(--nevoa);border:1px solid var(--areia);border-radius:99px;padding:6px 13px;font-family:inherit;font-size:11.5px;font-weight:600;color:var(--azul-forte);cursor:pointer;transition:.2s}
+  .ia-sugestoes button:hover{background:var(--azul-forte);color:#fff;border-color:var(--azul-forte)}
+  .ia-rodape{border-top:1px solid var(--areia);background:var(--branco);padding:12px 14px;display:flex;gap:10px;align-items:flex-end}
+  .ia-rodape textarea{flex:1;border:1px solid var(--areia);border-radius:13px;padding:10px 13px;font-family:inherit;font-size:13.5px;color:var(--tinta);resize:none;outline:none;max-height:110px;background:var(--creme)}
+  .ia-rodape textarea:focus{border-color:var(--azul)}
+  .ia-rodape button{background:var(--azul-forte);border:none;color:#fff;border-radius:12px;width:42px;height:42px;cursor:pointer;font-size:16px;flex-shrink:0;transition:.2s}
+  .ia-rodape button:hover{background:var(--tinta)}
+  .ia-rodape button:disabled{opacity:.5;cursor:default}
+  .ia-config{border-top:1px solid var(--areia);background:var(--nevoa);padding:9px 16px;font-size:11px;color:#8A96A5;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .ia-config a{color:var(--azul-forte);font-weight:700;cursor:pointer;text-decoration:none}
+  .ia-config .ponto{width:8px;height:8px;border-radius:50%;background:#C7CFDA;flex-shrink:0}
+  .ia-config .ponto.on{background:var(--verde)}
+
+  @media print{
+    .busca-caixa,nav,.reset-check,.ia-btn,.ia-painel{display:none}
+    header{padding:30px 0 40px}
+    body{font-size:12px}
+    .etapa,.confirma,.cad-card,.turno,.receita,.erro,.regra{break-inside:avoid;box-shadow:none}
+  }
+  @media (max-width:640px){
+    header{padding:40px 0 100px}
+    .etapa{padding:20px 16px 12px}
+    td,th{padding:9px 6px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="marca">blue<span>.</span></div>
+    <div class="eyebrow">Playbook Comercial · Uso interno</div>
+    <h1>Atalhos & Método de Atendimento — Comercial 1</h1>
+    <p class="sub">Tudo o que você precisa em um só lugar: <b>qual atalho usar em cada momento</b>, cadência de follow-up, rotina do dia e o checklist do dia da confirmação. Digite qualquer palavra na busca abaixo para encontrar o atalho certo em segundos.</p>
+  </div>
+</header>
+
+<div class="wrap busca-caixa">
+  <div class="busca-inner">
+    <svg class="lupa" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    <input id="busca" type="text" placeholder="Busque um atalho ou situação… ex.: pix, caro, feriado, termo, fora do rio" autocomplete="off">
+    <span class="contador" id="contador">81 atalhos</span>
+    <span class="dica-tecla">Aperte <kbd>/</kbd> para buscar</span>
+    <div class="busca-zero" id="buscaZero">
+      <span>Nenhum atalho encontrado para essa situação.</span>
+      <button id="buscaZeroIA" type="button">Perguntar à IA ✨</button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <nav aria-label="Seções">
+    <a href="#jornada">Jornada</a>
+    <a href="#regras">Regras de ouro</a>
+    <a href="#atalhos">Atalhos por etapa</a>
+    <a href="#confirmacao">Dia da confirmação</a>
+    <a href="#cadencia">Follow-up</a>
+    <a href="#rotina">Rotina do dia</a>
+    <a href="#receitas">Sequências prontas</a>
+    <a href="#erros">Erros a evitar</a>
+    <a href="jogo.html" class="nav-jogo">🎮 Arena de treino</a>
+  </nav>
+
+  <!-- ================= JORNADA ================= -->
+  <section id="jornada">
+    <div class="sec-head"><span class="sec-num">MAPA</span><h2>A jornada da lead em 10 passos</h2></div>
+    <p class="sec-desc">Toda conversa passa por esse caminho. Identifique <b>em qual passo a lead está</b> e use o atalho da etapa. Nunca pule etapas: quem pula acolhimento para falar de preço, perde a venda.</p>
+    <div class="jornada">
+      <a class="passo" href="#e1"><h3>Abertura</h3><p>Primeiro oi + nome + fonte</p><span class="tag">bomdiaprospectanova</span></a>
+      <a class="passo" href="#e3"><h3>Acolher a dor</h3><p>Ela conta a história dela</p><span class="tag">empatia</span></a>
+      <a class="passo" href="#e4"><h3>Autoridade</h3><p>Dr. Rafael + técnica + hospitais</p><span class="tag">sobreorafa</span></a>
+      <a class="passo" href="#e5"><h3>O que inclui</h3><p>Protocolo presencial ou tele</p><span class="tag">presencialatualprospec</span></a>
+      <a class="passo" href="#e6"><h3>Investimento</h3><p>Só depois de gerar valor</p><span class="tag">investimento</span></a>
+      <a class="passo" href="#e7"><h3>Objeções</h3><p>Caro, adiar, desistir</p><span class="tag">preçoalto</span></a>
+      <a class="passo" href="#e8"><h3>Agendamento</h3><p>Dados + forma de pagamento</p><span class="tag">agendar</span></a>
+      <a class="passo" href="#e9"><h3>Pagamento</h3><p>Pix e segunda parcela</p><span class="tag">pix</span></a>
+      <a class="passo" href="#e10"><h3>Pré-consulta</h3><p>Exames, fotos, questionário</p><span class="tag">Pósagendamento</span></a>
+      <a class="passo" href="#confirmacao"><h3>Confirmação</h3><p>Lembrete + TERMO ✍️</p><span class="tag">termodeautorização</span></a>
+    </div>
+  </section>
+
+  <!-- ================= REGRAS DE OURO ================= -->
+  <section id="regras">
+    <div class="sec-head"><span class="sec-num">MÉTODO</span><h2>As 6 regras de ouro da melhor SDR</h2></div>
+    <p class="sec-desc">Antes de qualquer atalho, o que separa uma comercial mediana de uma comercial de elite:</p>
+    <div class="regras">
+      <div class="regra"><div class="num">01</div><h3>Responda em até 5 minutos</h3><p>Lead de tráfego pago esfria em minutos. Responder em 5 min pode multiplicar a chance de conversão. Se não puder responder completo, mande o atalho de abertura e volte.</p></div>
+      <div class="regra"><div class="num">02</div><h3>Termine SEMPRE com uma pergunta</h3><p>Quem pergunta, conduz. Nunca envie um atalho e deixe a bola parada. Se o atalho não termina em pergunta, adicione uma: "Faz sentido pra você?", "Você já tem diagnóstico?"</p></div>
+      <div class="regra"><div class="num">03</div><h3>Uma pergunta por vez</h3><p>Duas perguntas na mesma mensagem = a lead responde só uma (ou nenhuma). Conduza como uma conversa, não como um formulário.</p></div>
+      <div class="regra"><div class="num">04</div><h3>Valor antes de preço</h3><p>Nunca envie <span style="font-family:monospace">investimento</span> antes de <span style="font-family:monospace">sobreorafa</span> e do protocolo da consulta. Preço sem contexto parece caro; preço com contexto parece justo.</p></div>
+      <div class="regra"><div class="num">05</div><h3>Personalize a primeira linha</h3><p>Atalho é base, não robô. Antes de enviar, adicione o nome dela e 1 frase conectando com o que ela acabou de dizer. 10 segundos que dobram a taxa de resposta.</p></div>
+      <div class="regra"><div class="num">06</div><h3>Nunca prometa, sempre conduza</h3><p>Jamais afirme diagnóstico, resultado, cura ou cobertura de plano. A frase segura é: "apenas uma avaliação médica individualizada pode confirmar o melhor caminho para o seu caso."</p></div>
+    </div>
+  </section>
+
+  <!-- ================= ATALHOS ================= -->
+  <section id="atalhos">
+    <div class="sec-head"><span class="sec-num">DIRETÓRIO</span><h2>Atalhos por etapa da jornada</h2></div>
+    <p class="sec-desc">Os 81 modelos organizados na ordem em que a conversa acontece. Cada etapa traz a dica de SDR para usar o atalho no momento certo.</p>
+
+    <!-- 1 -->
+    <div class="etapa" id="e1">
+      <div class="etapa-head"><h3>1 · Primeiro contato / Abertura</h3><span class="fase abertura">Abertura</span></div>
+      <p class="quando">Os primeiros 60 segundos definem tudo. Objetivo: nome + fonte + se já tem diagnóstico.</p>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">bomdiaprospectanova</span><span class="cod">boatardeprospectanova</span></td><td>Primeiro "oi" a uma lead nova (manhã/tarde), já perguntando se tem diagnóstico</td></tr>
+          <tr class="atalho-row"><td><span class="cod">apresentarmaria</span><span class="cod">apresentamanha</span></td><td>Apresentação pessoal da comercial (bom dia / boa tarde)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">trafegopago</span><span class="cod">trafegopagoI</span></td><td>Lead que veio de anúncio pago (tráfego pago)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">inglesanuncio</span></td><td>Lead internacional que veio de anúncio (em inglês)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">bemvindo</span><span class="cod">aqui</span></td><td>Boas-vindas + apresentação da Clínica Blue</td></tr>
+          <tr class="atalho-row"><td><span class="cod">bomdia</span><span class="cod">bomdiaii</span><span class="cod">aposfimdesemana</span></td><td>Quebra-gelo casual (bom dia / "como passou o fim de semana?")</td></tr>
+          <tr class="atalho-row"><td><span class="cod">quebom</span><span class="cod">felizencontrado</span><span class="cod">encontrouu</span><span class="cod">fonte</span><span class="cod">nome</span></td><td>Perguntar como te encontrou / qual o nome dela</td></tr>
+          <tr class="atalho-row"><td><span class="cod">comoposso</span></td><td>"Como posso te auxiliar hoje?"</td></tr>
+        </tbody>
+      </table>
+      <div class="sdr-tip"><b>Dica de SDR:</b> lead de anúncio recebe <b>trafegopago</b> em até 5 minutos — é a lead mais quente e mais cara. Em seguida, pergunte o nome (<b>nome</b>) e use o nome dela em TODAS as mensagens seguintes. Nome no início da frase aumenta muito a taxa de leitura.</div>
+    </div>
+
+    <!-- 2 -->
+    <div class="etapa" id="e2">
+      <div class="etapa-head"><h3>2 · Feriado / Retomada por pausa</h3><span class="fase abertura">Abertura</span></div>
+      <p class="quando">Voltou de feriado com mensagens acumuladas? Peça desculpa pela espera antes de qualquer coisa — isso zera a frustração.</p>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">bomdiaferiado</span><span class="cod">boatardeferiadooo</span></td><td>Primeiro contato após feriado (pedindo desculpa pela espera)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">retomandoferiado</span></td><td>Retomar conversa que começou antes do feriado</td></tr>
+          <tr class="atalho-row"><td><span class="cod">inglesbomdiaferiado</span><span class="cod">espanholbomdiaferiado</span></td><td>Versões em inglês / espanhol do bom dia pós-feriado</td></tr>
+          <tr class="atalho-row"><td><span class="cod">inglesretomandoassu</span><span class="cod">espanholretomando</span></td><td>Retomar conversa pós-feriado em inglês / espanhol</td></tr>
+        </tbody>
+      </table>
+      <div class="sdr-tip"><b>Dica de SDR:</b> na volta do feriado, priorize a fila nesta ordem: <b>1)</b> quem tinha consulta próxima, <b>2)</b> quem estava na etapa de pagamento, <b>3)</b> leads novas do anúncio, <b>4)</b> leads mornas. Nunca comece pela mais antiga — comece pela mais quente.</div>
+    </div>
+
+    <!-- 3 -->
+    <div class="etapa" id="e3">
+      <div class="etapa-head"><h3>3 · Empatia / Acolhimento</h3><span class="fase meio">Meio de funil</span></div>
+      <p class="quando">Ela contou a dor. Este é o momento MAIS importante da conversa — não venda nada aqui, só acolha.</p>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">empatia</span></td><td>Quando ela relata que "achava que o problema era com ela"</td></tr>
+          <tr class="atalho-row"><td><span class="cod">empatia2</span></td><td>Quando ela compartilha a história dela e você agradece a confiança</td></tr>
+          <tr class="atalho-row"><td><span class="cod">celuylip</span></td><td>Explicar a diferença entre celulite e lipedema</td></tr>
+        </tbody>
+      </table>
+      <div class="sdr-tip"><b>Dica de SDR:</b> antes de mandar <b>empatia</b>, espelhe uma palavra que ELA usou ("entendo esse peso nas pernas que você descreveu…"). Espelhamento é a técnica nº 1 de conexão. E anote a dor principal dela — você vai usar de novo na hora da objeção de preço.</div>
+    </div>
+
+    <!-- 4 -->
+    <div class="etapa" id="e4">
+      <div class="etapa-head"><h3>4 · Clínica / Médico / Técnica</h3><span class="fase meio">Meio de funil</span></div>
+      <p class="quando">Hora de construir autoridade: quem é o Dr. Rafael, a LipeDefinition® e onde ele opera.</p>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">sobreorafa</span></td><td>Apresentar quem é o Dr. Rafael Erthal</td></tr>
+          <tr class="atalho-row"><td><span class="cod">lipedefinition</span></td><td>Explicar a técnica cirúrgica LipeDefinition®</td></tr>
+          <tr class="atalho-row"><td><span class="cod">hospitais</span></td><td>Listar em quais hospitais ele opera</td></tr>
+          <tr class="atalho-row"><td><span class="cod">pacireg</span></td><td>Reagir quando a paciente é de uma região que vocês já atendem</td></tr>
+        </tbody>
+      </table>
+      <div class="sdr-tip"><b>Dica de SDR:</b> a sequência que mais converte é <b>empatia → sobreorafa → antesdepois</b>. Dor acolhida + autoridade + prova social. Se ela mencionar medo de "pele irregular depois da cirurgia", este é o gancho perfeito para citar o Sublift como diferencial de acabamento — sem prometer resultado.</div>
+    </div>
+
+    <!-- 5 -->
+    <div class="etapa" id="e5">
+      <div class="etapa-head"><h3>5 · O que a consulta inclui</h3><span class="fase meio">Meio de funil</span></div>
+      <p class="quando">Construção de valor: mostre TUDO que a consulta entrega ANTES de falar de preço.</p>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">inclco</span><span class="cod">consonline2</span><span class="cod">plascilainclui</span></td><td>Detalhar o que a consulta inicial entrega</td></tr>
+          <tr class="atalho-row"><td><span class="cod">presencialatualprospec</span></td><td>Explicar o protocolo presencial de 4 etapas (RJ)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">teleatualprospec</span></td><td>Explicar a teleconsulta de 3 etapas (fora do RJ)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">foradorio</span></td><td>Paciente de fora do RJ (teleconsulta + logística)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">homecare</span></td><td>Explicar o acompanhamento homecare / pós-operatório</td></tr>
+        </tbody>
+      </table>
+      <div class="sdr-tip"><b>Dica de SDR:</b> pergunte a cidade ANTES de explicar o protocolo — assim você já manda o atalho certo (<b>presencialatualprospec</b> para RJ, <b>teleatualprospec</b> + <b>foradorio</b> para o resto). Errar aqui faz você parecer despreparada.</div>
+    </div>
+
+    <!-- 6 -->
+    <div class="etapa" id="e6">
+      <div class="etapa-head"><h3>6 · Valores / Investimento</h3><span class="fase fechamento">Fechamento</span></div>
+      <p class="quando">Só chegue aqui depois das etapas 3, 4 e 5. Preço apresentado cedo demais é a maior causa de perda.</p>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">investimento</span></td><td>Informar o valor da consulta (R$ 1.800)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">cirurgiavaria</span></td><td>Quando pergunta o valor da cirurgia (varia entre R$ 50–150 mil, depende da avaliação)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">aceitaplano</span></td><td>Quando pergunta se aceita plano de saúde (atendimento particular)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">retornovalor</span></td><td>Explicar o valor da consulta de retorno (R$ 900)</td></tr>
+        </tbody>
+      </table>
+      <div class="sdr-tip"><b>Dica de SDR:</b> se ela perguntar o preço logo na primeira mensagem, NÃO ignore — acolha e adie com elegância: "Claro! Já te passo o investimento. Antes, me conta rapidinho: você já tem diagnóstico ou ainda está investigando?" Depois de 2–3 trocas, envie <b>inclco</b> e só então <b>investimento</b>. Após enviar o valor, emende com <b>agendar</b> na mesma sequência — nunca deixe o preço ser a última mensagem.</div>
+      <div class="alerta"><b>Atenção:</b> valores de cirurgia só como faixa (<b>cirurgiavaria</b>) e sempre condicionados à avaliação. Nunca prometa valor fechado, cobertura de plano ou reembolso por mensagem.</div>
+    </div>
+
+    <!-- 7 -->
+    <div class="etapa" id="e7">
+      <div class="etapa-head"><h3>7 · Objeções</h3><span class="fase fechamento">Fechamento</span></div>
+      <p class="quando">Objeção não é "não" — é pedido de mais segurança. Acolha primeiro, responda depois, avance sempre.</p>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">preçoalto</span><span class="cod">objeção</span></td><td>Objeção "está caro" / investimento alto (deixar para depois…)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">entendperfeit</span><span class="cod">objeção</span></td><td>Quando ela quer adiar — remarcar para um mês melhor</td></tr>
+          <tr class="atalho-row"><td><span class="cod">alternativadrleonardo</span></td><td>Oferecer alternativa mais acessível (Dr. Leonardo, R$ 900)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">motivo</span></td><td>Perguntar o motivo da desistência</td></tr>
+        </tbody>
+      </table>
+      <div class="sdr-tip"><b>Dica de SDR:</b> use o método <b>A-R-A</b>: <b>A</b>colhe ("te entendo perfeitamente"), <b>R</b>esgata a dor que ela mesma contou ("você me disse que sofre com isso há anos…"), <b>A</b>vança (pergunta ou alternativa). Se "caro" persistir após <b>preçoalto</b>, ofereça <b>alternativadrleonardo</b> — recuperar com ticket menor é melhor que perder. E toda desistência recebe <b>motivo</b>: a resposta te diz se a lead é resgatável e vira inteligência para o time.</div>
+    </div>
+
+    <!-- 8 -->
+    <div class="etapa" id="e8">
+      <div class="etapa-head"><h3>8 · Agendamento</h3><span class="fase fechamento">Fechamento</span></div>
+      <p class="quando">Ela disse sim (ou quase). Reduza o atrito: menos passos, mais clareza.</p>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">agendar</span></td><td>Perguntar se quer agendar</td></tr>
+          <tr class="atalho-row"><td><span class="cod">agendamento</span></td><td>Explicar como funciona o processo de agendamento</td></tr>
+          <tr class="atalho-row"><td><span class="cod">conclusaopagamento</span></td><td>Explicar o pagamento antecipado (R$ 1.800 ou 2× de R$ 900)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">conclusaoagenda</span></td><td>Coletar dados de cadastro + formulário</td></tr>
+          <tr class="atalho-row"><td><span class="cod">dados</span></td><td>Coletar dados da paciente (versão curta)</td></tr>
+        </tbody>
+      </table>
+      <div class="sdr-tip"><b>Dica de SDR:</b> ao oferecer horário, dê <b>duas opções concretas</b> ("terça 10h ou quinta 14h?") em vez de "qual dia é melhor pra você?". Escolher entre duas opções é fácil; escolher no vazio trava a decisão. Sinal de compra detectado ("e como funciona pra marcar?") = envie <b>agendar</b> imediatamente, mesmo que ainda haja dúvidas abertas.</div>
+    </div>
+
+    <!-- 9 -->
+    <div class="etapa" id="e9">
+      <div class="etapa-head"><h3>9 · Pagamento</h3><span class="fase fechamento">Fechamento</span></div>
+      <p class="quando">Agendou ≠ pagou. A vaga só é real depois do Pix — acompanhe até a confirmação.</p>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">pix</span></td><td>Enviar dados bancários / chave Pix</td></tr>
+          <tr class="atalho-row"><td><span class="cod">restantepagamento</span></td><td>Cobrar a 2ª parte do pagamento</td></tr>
+        </tbody>
+      </table>
+      <div class="sdr-tip"><b>Dica de SDR:</b> enviou o <b>pix</b> e não caiu em <b>2 horas</b>? Mande um toque leve: "Oi [nome], conseguiu fazer o Pix? Qualquer dificuldade me avisa que te ajudo 💙". Sem pagamento até o fim do dia → lembre com gentileza que o horário fica reservado até [prazo]. Escassez real, nunca inventada. Anote no controle a data da 2ª parcela e cobre com <b>restantepagamento</b> 2 dias antes do prazo, não em cima.</div>
+    </div>
+
+    <!-- 10 -->
+    <div class="etapa" id="e10">
+      <div class="etapa-head"><h3>10 · Pós-agendamento / Preparo</h3><span class="fase pos">Pós-venda</span></div>
+      <p class="quando">Pagou? A experiência premium começa agora. Tudo o que ela precisa, sem que precise pedir.</p>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">Pósagendamento</span></td><td>Explicar os próximos passos após agendar</td></tr>
+          <tr class="atalho-row"><td><span class="cod">exame</span><span class="cod">exames</span></td><td>Enviar pedidos e lista de exames</td></tr>
+          <tr class="atalho-row"><td><span class="cod">questionário</span><span class="cod">Instruçõesfotos</span></td><td>Enviar questionário de anamnese / instruções de fotos</td></tr>
+          <tr class="atalho-row"><td><span class="cod">termodeautorização</span></td><td>Pedir assinatura do termo pré-consulta (assinatura digital)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">endereçorj</span><span class="cod">spendereco</span><span class="cod">endereçosp</span></td><td>Endereços (RJ / SP)</td></tr>
+        </tbody>
+      </table>
+      <div class="sdr-tip"><b>Dica de SDR:</b> logo após o pagamento confirmado, envie em sequência: <b>Pósagendamento → exames → questionário</b>. Três dias depois, verifique se ela respondeu o questionário e enviou as fotos — a consulta rende muito mais quando o Dr. Rafael recebe tudo antes.</div>
+    </div>
+
+    <!-- 11 -->
+    <div class="etapa" id="e11">
+      <div class="etapa-head"><h3>11 · Confirmação de consulta</h3><span class="fase pos">Pós-venda</span></div>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">confirmar consulta</span><span class="cod">confirmação de consulta</span><span class="cod">confirmação wpp</span><span class="cod">confirmação</span></td><td>Lembrete/confirmação da consulta próxima</td></tr>
+        </tbody>
+      </table>
+      <div class="alerta"><b>Regra inegociável:</b> no dia da confirmação, a mensagem de confirmação e o <b>termodeautorização</b> (documento de assinatura digital) andam JUNTOS. Confirmação sem termo = consulta travada na recepção. Veja o checklist completo abaixo ⬇️</div>
+    </div>
+
+    <!-- 12 -->
+    <div class="etapa" id="e12">
+      <div class="etapa-head"><h3>12 · Resgate / Follow-up de leads</h3><span class="fase meio">Nutrição</span></div>
+      <p class="quando">A fortuna está no follow-up: a maioria das vendas acontece depois do 5º contato.</p>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">followup lead morna</span><span class="cod">Resgate lead fria</span></td><td>Lead morna/fria há algum tempo sem responder</td></tr>
+          <tr class="atalho-row"><td><span class="cod">Resgate lead quente</span></td><td>Lead quente — segurar horário antes de liberar a vaga</td></tr>
+          <tr class="atalho-row"><td><span class="cod">Retomaremdata</span><span class="cod">retomarjaneiro</span></td><td>Retomar na data combinada ("me chama em janeiro")</td></tr>
+        </tbody>
+      </table>
+      <div class="sdr-tip"><b>Dica de SDR:</b> "me chama mês que vem" é um COMPROMISSO, não um fim de conversa. Anote na agenda na hora e retome NA DATA exata com <b>Retomaremdata</b> — a pontualidade em si já vende ("nossa, você lembrou!"). Veja a cadência completa na seção Follow-up.</div>
+    </div>
+
+    <!-- 13 -->
+    <div class="etapa" id="e13">
+      <div class="etapa-head"><h3>13 · São Paulo (agenda específica)</h3><span class="fase meio">Nutrição</span></div>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">resgateleadsp</span><span class="cod">Resgate SP</span></td><td>Avisar a lead sobre nova data de agenda em SP</td></tr>
+          <tr class="atalho-row"><td><span class="cod">consultaSP</span><span class="cod">resgatesp2</span></td><td>Explicar o protocolo da consulta em SP</td></tr>
+        </tbody>
+      </table>
+      <div class="sdr-tip"><b>Dica de SDR:</b> mantenha uma lista viva "aguardando SP". Quando abrir agenda, dispare <b>resgateleadsp</b> para toda a lista no MESMO dia, com urgência real: vagas em SP são limitadas e isso é um dos gatilhos de conversão mais fortes que você tem.</div>
+    </div>
+
+    <!-- 14 -->
+    <div class="etapa" id="e14">
+      <div class="etapa-head"><h3>14 · Goiânia</h3><span class="fase meio">Nutrição</span></div>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">goexplicar</span></td><td>Explicar o atendimento mensal em Goiânia</td></tr>
+          <tr class="atalho-row"><td><span class="cod">goianiafechada</span></td><td>Avisar que a agenda de Goiânia está fechada</td></tr>
+        </tbody>
+      </table>
+      <div class="sdr-tip"><b>Dica de SDR:</b> agenda fechada não encerra a conversa. Após <b>goianiafechada</b>, ofereça a alternativa: teleconsulta agora (<b>teleatualprospec</b>) ou entrar na lista da próxima data. Nunca termine com um "não" seco.</div>
+    </div>
+
+    <!-- 15 -->
+    <div class="etapa" id="e15">
+      <div class="etapa-head"><h3>15 · Provas sociais / Reforço</h3><span class="fase meio">Apoio</span></div>
+      <table>
+        <thead><tr><th style="width:42%">Atalho</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr class="atalho-row"><td><span class="cod">antesdepois</span></td><td>Enviar link de antes/depois (Instagram)</td></tr>
+          <tr class="atalho-row"><td><span class="cod">mreld</span></td><td>"Vamos mudar essa realidade agora!!" — reforço motivacional</td></tr>
+        </tbody>
+      </table>
+      <div class="sdr-tip"><b>Dica de SDR:</b> <b>antesdepois</b> rende mais em dois momentos: logo após <b>sobreorafa</b> (autoridade + prova) e como resposta à hesitação ("vou pensar…"). <b>mreld</b> é o empurrão final quando ela demonstra vontade mas trava — use com moderação para não perder o tom premium.</div>
+    </div>
+  </section>
+
+  <!-- ================= CONFIRMAÇÃO ================= -->
+  <section id="confirmacao">
+    <div class="confirma">
+      <span class="selo">⚠ Rotina crítica</span>
+      <h2>Checklist do dia da confirmação</h2>
+      <p class="quando-roda">Rode este checklist para <b>cada paciente com consulta no dia seguinte</b> (ideal: véspera pela manhã). Clique para marcar conforme executa.</p>
+      <div class="check-lista" id="checklist">
+        <div class="check-item" tabindex="0"><span class="ck"></span><div><h4>1 · Enviar a confirmação da consulta</h4><p>Atalho <span class="cod">confirmação wpp</span> — com data, horário, protocolo (presencial/tele) e nome do Dr. Rafael. Peça que ela responda confirmando.</p></div></div>
+        <div class="check-item termo" tabindex="0"><span class="ck"></span><div><h4>2 · ENVIAR O TERMO DE AUTORIZAÇÃO ✍️ — nunca esquecer!</h4><p>Atalho <span class="cod">termodeautorização</span> — o documento de assinatura digital vai <b>na mesma conversa da confirmação, logo em seguida</b>. Explique em uma linha: "é rapidinho, assinatura digital pelo celular, leva 1 minuto". Sem termo assinado, a consulta trava na recepção.</p></div></div>
+        <div class="check-item" tabindex="0"><span class="ck"></span><div><h4>3 · Conferir questionário + fotos</h4><p>Ela respondeu o questionário de anamnese e enviou as fotos? Se não, reenvie <span class="cod">questionário</span> / <span class="cod">Instruçõesfotos</span> junto com a confirmação.</p></div></div>
+        <div class="check-item" tabindex="0"><span class="ck"></span><div><h4>4 · Conferir exames</h4><p>Se houve pedido de exames, verifique se ela enviou. Se não, reenvie <span class="cod">exames</span> com gentileza.</p></div></div>
+        <div class="check-item" tabindex="0"><span class="ck"></span><div><h4>5 · Enviar o endereço (presencial)</h4><p><span class="cod">endereçorj</span> ou <span class="cod">endereçosp</span> + orientação de chegada. Para teleconsulta: confirme que ela recebeu o link e sabe como acessar.</p></div></div>
+        <div class="check-item" tabindex="0"><span class="ck"></span><div><h4>6 · Conferir pagamento completo</h4><p>Se ela pagou 2× de R$ 900, a segunda parcela caiu? Se não, cobre com <span class="cod">restantepagamento</span> ANTES do dia da consulta.</p></div></div>
+        <div class="check-item" tabindex="0"><span class="ck"></span><div><h4>7 · No dia: monitorar a assinatura do termo</h4><p>Até 3h antes da consulta, se o termo digital não foi assinado, mande um lembrete carinhoso: "Oi [nome]! Só falta a assinatura do termo pra deixar tudo pronto pra você 💙 — chega no seu e-mail/WhatsApp, leva 1 minutinho."</p></div></div>
+      </div>
+      <button class="reset-check" id="resetCheck">Limpar checklist (próxima paciente)</button>
+    </div>
+  </section>
+
+  <!-- ================= CADÊNCIA ================= -->
+  <section id="cadencia">
+    <div class="sec-head"><span class="sec-num">FOLLOW-UP</span><h2>Cadência de resgate — quando insistir e quando pausar</h2></div>
+    <p class="sec-desc">Classifique cada lead em quente, morna ou fria e siga o ritmo. Regra geral: <b>quem some não recebeu valor suficiente</b> — cada follow-up deve entregar algo (prova social, informação nova), nunca só "e aí, alguma novidade?".</p>
+    <div class="cadencia">
+      <div class="cad-card quente">
+        <h3>🔥 Lead quente</h3>
+        <p class="def">Perguntou valor, pediu agenda ou disse "quero marcar" — e sumiu.</p>
+        <ol>
+          <li><span class="t">+2–4h</span><span>Toque leve: "conseguiu ver minha mensagem, [nome]?"</span></li>
+          <li><span class="t">+1 dia</span><span><span class="cod">Resgate lead quente</span> — horário reservado, antes de liberar a vaga</span></li>
+          <li><span class="t">+2 dias</span><span><span class="cod">antesdepois</span> + pergunta aberta sobre a dor dela</span></li>
+          <li><span class="t">+4 dias</span><span><span class="cod">motivo</span> — entender o que travou (preço? data? medo?)</span></li>
+          <li><span class="t">+7 dias</span><span>Última do ciclo → reclassificar como morna</span></li>
+        </ol>
+      </div>
+      <div class="cad-card morno">
+        <h3>🌤 Lead morna</h3>
+        <p class="def">Conversou, demonstrou interesse, mas não avançou para agenda.</p>
+        <ol>
+          <li><span class="t">+3 dias</span><span><span class="cod">followup lead morna</span> com gancho novo (conteúdo, prova)</span></li>
+          <li><span class="t">+7 dias</span><span>Pergunta sobre a dor: "como estão as pernas essa semana?"</span></li>
+          <li><span class="t">+15 dias</span><span><span class="cod">antesdepois</span> ou novidade de agenda (SP/GO abriu?)</span></li>
+          <li><span class="t">+30 dias</span><span>Reclassificar como fria e entrar no ciclo mensal</span></li>
+        </ol>
+      </div>
+      <div class="cad-card frio">
+        <h3>❄️ Lead fria</h3>
+        <p class="def">Parou de responder há mais de 30 dias ou pediu para falar depois.</p>
+        <ol>
+          <li><span class="t">Mensal</span><span><span class="cod">Resgate lead fria</span> — sempre com motivo real (nova agenda, conteúdo)</span></li>
+          <li><span class="t">Data marcada</span><span><span class="cod">Retomaremdata</span> — SEMPRE na data exata combinada</span></li>
+          <li><span class="t">Agenda SP</span><span><span class="cod">resgateleadsp</span> quando abrir data em São Paulo</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="sdr-tip" style="margin-top:16px"><b>Regra dos 2 sem resposta:</b> nunca envie 3 mensagens seguidas sem nenhuma resposta no mesmo ciclo — a terceira vira spam e queima a lead. Espere o próximo marco da cadência.</div>
+  </section>
+
+  <!-- ================= ROTINA ================= -->
+  <section id="rotina">
+    <div class="sec-head"><span class="sec-num">PRODUTIVIDADE</span><h2>A rotina diária da comercial de elite</h2></div>
+    <p class="sec-desc">Produtividade não é responder mais rápido o dia inteiro — é trabalhar em blocos, na ordem certa de prioridade.</p>
+    <div class="rotina">
+      <div class="turno">
+        <h3>☀️ Manhã <span class="hora">08h–09h · bloco de abertura</span></h3>
+        <ul>
+          <li><b>Checklist de confirmação</b> para todas as consultas de amanhã (confirmação + <b>termodeautorização</b>)</li>
+          <li>Responder leads que chegaram fora do horário (com <span class="cod">bomdiaprospectanova</span>)</li>
+          <li>Verificar Pix pendentes de ontem → toque leve</li>
+          <li>Conferir a agenda de retomadas do dia (<span class="cod">Retomaremdata</span>)</li>
+        </ul>
+      </div>
+      <div class="turno">
+        <h3>🌤 Ao longo do dia <span class="hora">regra dos 5 min</span></h3>
+        <ul>
+          <li>Lead nova de tráfego = prioridade máxima, responder em até 5 minutos</li>
+          <li>Conversas ativas de fechamento vêm antes de follow-ups</li>
+          <li>Anotar TODA promessa ("te chamo dia X") na hora, no controle</li>
+          <li>Marcar cada lead como 🔥 quente / 🌤 morna / ❄️ fria ao fim de cada conversa</li>
+        </ul>
+      </div>
+      <div class="turno">
+        <h3>🌆 Fim do dia <span class="hora">17h–18h · bloco de fechamento</span></h3>
+        <ul>
+          <li>Bloco de follow-ups da cadência (quentes → mornas → frias)</li>
+          <li>Cobrar 2ªs parcelas com vencimento próximo (<span class="cod">restantepagamento</span>)</li>
+          <li>Conferir termos digitais das consultas de amanhã: todos assinados?</li>
+          <li>Zerar a caixa: nenhuma lead termina o dia sem resposta ou sem próxima ação agendada</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RECEITAS ================= -->
+  <section id="receitas">
+    <div class="sec-head"><span class="sec-num">SEQUÊNCIAS</span><h2>Receitas prontas — combinações que convertem</h2></div>
+    <p class="sec-desc">Situações reais e a ordem exata dos atalhos. Personalize sempre a primeira linha com o nome dela.</p>
+
+    <div class="receita">
+      <h3>💬 Lead nova vinda de anúncio</h3>
+      <div class="fluxo">
+        <span class="cod">trafegopago</span><span class="seta">→</span>
+        <span class="cod">nome</span><span class="seta">→</span>
+        <span class="cod">empatia</span><span class="seta">→</span>
+        <span class="cod">sobreorafa</span><span class="seta">→</span>
+        <span class="cod">inclco</span><span class="seta">→</span>
+        <span class="cod">investimento</span><span class="seta">→</span>
+        <span class="cod">agendar</span>
+        <span class="nota">Ritmo: não dispare tudo de uma vez — cada atalho após a resposta dela. A conversa ideal fecha em 1–2 dias.</span>
+      </div>
+    </div>
+
+    <div class="receita">
+      <h3>💰 Lead que pergunta o preço logo de cara</h3>
+      <div class="fluxo">
+        <span>Acolher + 1 pergunta de qualificação</span><span class="seta">→</span>
+        <span class="cod">celuylip</span> <em style="font-size:12px;color:#75828F">(se houver dúvida)</em><span class="seta">→</span>
+        <span class="cod">sobreorafa</span><span class="seta">→</span>
+        <span class="cod">inclco</span><span class="seta">→</span>
+        <span class="cod">investimento</span><span class="seta">→</span>
+        <span class="cod">agendar</span>
+        <span class="nota">Nunca mande o preço "seco". Sempre valor antes, agenda depois.</span>
+      </div>
+    </div>
+
+    <div class="receita">
+      <h3>🛫 Lead de fora do Rio</h3>
+      <div class="fluxo">
+        <span>Perguntar a cidade</span><span class="seta">→</span>
+        <span class="cod">foradorio</span><span class="seta">→</span>
+        <span class="cod">teleatualprospec</span><span class="seta">→</span>
+        <span class="cod">investimento</span><span class="seta">→</span>
+        <span class="cod">agendar</span>
+        <span class="nota">Se for de SP ou GO, verifique antes se há agenda presencial (consultaSP / goexplicar) — presencial converte mais.</span>
+      </div>
+    </div>
+
+    <div class="receita">
+      <h3>✅ Fechou! Do Pix à consulta</h3>
+      <div class="fluxo">
+        <span class="cod">conclusaopagamento</span><span class="seta">→</span>
+        <span class="cod">pix</span><span class="seta">→</span>
+        <span class="cod">dados</span><span class="seta">→</span>
+        <span class="cod">Pósagendamento</span><span class="seta">→</span>
+        <span class="cod">exames</span><span class="seta">→</span>
+        <span class="cod">questionário</span><span class="seta">→</span>
+        <span style="font-weight:700">véspera:</span>
+        <span class="cod">confirmação wpp</span><span class="seta">+</span>
+        <span class="cod">termodeautorização</span>
+        <span class="nota">A dupla confirmação + termo é indissociável. É o que garante consulta redonda e recepção sem fila.</span>
+      </div>
+    </div>
+
+    <div class="receita">
+      <h3>🌙 Lead sumiu depois de receber o valor</h3>
+      <div class="fluxo">
+        <span>+1 dia:</span><span class="cod">Resgate lead quente</span><span class="seta">→</span>
+        <span>+2 dias:</span><span class="cod">antesdepois</span><span class="seta">→</span>
+        <span>+4 dias:</span><span class="cod">motivo</span><span class="seta">→</span>
+        <span>se for preço:</span><span class="cod">alternativadrleonardo</span>
+        <span class="nota">Sumir após o valor quase sempre é objeção de preço não verbalizada. O atalho "motivo" destrava a conversa real.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ERROS ================= -->
+  <section id="erros">
+    <div class="sec-head"><span class="sec-num">CUIDADO</span><h2>Os 6 erros que matam a conversão</h2></div>
+    <div class="erros">
+      <div class="erro"><span class="x">✕ Errado</span><p>Mandar o valor na primeira resposta porque ela perguntou.</p><hr><span class="v">✓ Certo</span><p>Acolher, qualificar em 2–3 trocas, gerar valor, e então informar o investimento já emendando a agenda.</p></div>
+      <div class="erro"><span class="x">✕ Errado</span><p>Confirmar a consulta e esquecer o termo de autorização.</p><hr><span class="v">✓ Certo</span><p>Confirmação + <b>termodeautorização</b> na mesma conversa, sempre. E monitorar a assinatura digital até 3h antes.</p></div>
+      <div class="erro"><span class="x">✕ Errado</span><p>Enviar o atalho puro, sem nome, igual para todo mundo.</p><hr><span class="v">✓ Certo</span><p>Nome + 1 frase conectando com o que ela disse + atalho. 10 segundos de personalização, o dobro de resposta.</p></div>
+      <div class="erro"><span class="x">✕ Errado</span><p>Duas ou três perguntas na mesma mensagem.</p><hr><span class="v">✓ Certo</span><p>Uma pergunta por vez. A resposta dela indica o próximo atalho.</p></div>
+      <div class="erro"><span class="x">✕ Errado</span><p>Prometer resultado, "cura", diagnóstico ou cobertura de plano para fechar.</p><hr><span class="v">✓ Certo</span><p>"Apenas uma avaliação médica individualizada pode confirmar o melhor caminho para o seu caso." Segurança vende mais que promessa.</p></div>
+      <div class="erro"><span class="x">✕ Errado</span><p>Deixar a lead "para depois" sem registrar nada.</p><hr><span class="v">✓ Certo</span><p>Toda conversa termina com uma próxima ação anotada: data de retomada, follow-up da cadência ou classificação 🔥/🌤/❄️.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="marca">blue<span style="color:var(--azul)">.</span></div>
+    <p style="margin-top:8px">Playbook Comercial · Blue Clínica — Dr. Rafael Erthal · Documento interno de treinamento</p>
+    <p style="margin-top:4px">Dúvida sobre um atalho ou situação nova? Fale com a Letícia (L.H.E.X Systems).</p>
+  </footer>
+</main>
+
+<!-- ================= ASSISTENTE IA ================= -->
+<button class="ia-btn" id="iaBtn" type="button" aria-label="Abrir assistente de IA"><span class="brilho">✨</span> Assistente blue.</button>
+<div class="ia-painel" id="iaPainel" role="dialog" aria-label="Assistente de IA">
+  <div class="ia-head">
+    <div class="titulo">Assistente blue. ✨<small>IA treinada no playbook — pergunte qualquer situação</small></div>
+    <button id="iaFechar" type="button" aria-label="Fechar">✕</button>
+  </div>
+  <div class="ia-corpo" id="iaCorpo">
+    <div class="ia-msg bot">Oi, Maria! 💙 Me conta a situação da lead que eu te digo o atalho certo e ainda escrevo um rascunho de mensagem personalizada. Pode ser do seu jeito: "ela achou caro", "sumiu depois do pix", "é de Recife e quer saber preço"…</div>
+    <div class="ia-sugestoes" id="iaSugestoes">
+      <button type="button">Ela disse que está caro 😥</button>
+      <button type="button">Sumiu depois que mandei o valor</button>
+      <button type="button">Pergunta se aceita plano de saúde</button>
+      <button type="button">É de fora do Rio, o que mando?</button>
+      <button type="button">Consulta amanhã — o que confiro?</button>
+    </div>
+  </div>
+  <div class="ia-rodape">
+    <textarea id="iaInput" rows="1" placeholder="Descreva a situação da lead…"></textarea>
+    <button id="iaEnviar" type="button" aria-label="Enviar">➤</button>
+  </div>
+  <div class="ia-config">
+    <span class="ponto" id="iaStatus"></span>
+    <span id="iaStatusTxt">Verificando conexão com a IA…</span>
+    <a id="iaChave">Configurar chave</a>
+  </div>
+</div>
+
+<script src="assets/atalhos.js"></script>
+<script src="assets/gemini.js"></script>
+<script>
+  // ---------- Busca inteligente ----------
+  // Consertada: além do texto visível, cada linha agora é indexada com as
+  // palavras-chave de situação da base (assets/atalhos.js). A Maria pode
+  // digitar a objeção ou dificuldade do jeito dela ("achou caro", "sumiu",
+  // "plano de saúde", "fora do rio") e a lupa encontra o atalho certo.
+  const busca = document.getElementById('busca');
+  const contador = document.getElementById('contador');
+  const buscaZero = document.getElementById('buscaZero');
+  const rows = Array.from(document.querySelectorAll('.atalho-row'));
+  const etapas = Array.from(document.querySelectorAll('.etapa'));
+  const totalAtalhos = window.ATALHOS.length;
+  contador.textContent = totalAtalhos + ' atalhos';
+
+  function normaliza(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();}
+
+  // Índice: código normalizado -> registro da base
+  const porCodigo = {};
+  window.ATALHOS.forEach(a=>{ porCodigo[normaliza(a.c)] = a; });
+
+  // Cada linha ganha um "palheiro" de busca: texto visível + situações + palavras-chave
+  rows.forEach(r=>{
+    const partes = [r.textContent];
+    r.querySelectorAll('.cod').forEach(cod=>{
+      const reg = porCodigo[normaliza(cod.textContent)];
+      if(reg){ partes.push(reg.q, reg.k, window.ETAPAS[reg.e].nome); }
+    });
+    r.dataset.busca = normaliza(partes.join(' '));
+  });
+
+  function filtrar(){
+    const q = normaliza(busca.value);
+    if(!q){
+      rows.forEach(r=>{r.classList.remove('hit','miss');});
+      etapas.forEach(e=>e.style.display='');
+      contador.textContent = totalAtalhos + ' atalhos';
+      buscaZero.classList.remove('on');
+      return;
+    }
+    const termos = q.split(' ').filter(Boolean);
+    let hits = 0;
+    rows.forEach(r=>{
+      const txt = r.dataset.busca;
+      const bate = termos.every(t=>txt.includes(t));
+      if(bate){ r.classList.add('hit'); r.classList.remove('miss'); hits++; }
+      else { r.classList.add('miss'); r.classList.remove('hit'); }
+    });
+    etapas.forEach(e=>{
+      const temHit = e.querySelector('.atalho-row.hit');
+      e.style.display = temHit ? '' : 'none';
+    });
+    contador.textContent = hits + (hits===1?' resultado':' resultados');
+    buscaZero.classList.toggle('on', hits===0 && q.length>2);
+    if(hits>0){
+      const primeira = document.querySelector('.etapa .atalho-row.hit');
+      if(primeira && q.length>2){
+        const secao = document.getElementById('atalhos');
+        const topo = secao.getBoundingClientRect().top;
+        if(topo < -200 || topo > window.innerHeight){
+          primeira.closest('.etapa').scrollIntoView({behavior:'smooth', block:'start'});
+        }
+      }
+    }
+  }
+  busca.addEventListener('input', filtrar);
+
+  document.addEventListener('keydown', e=>{
+    const digitando = ['INPUT','TEXTAREA'].includes(document.activeElement.tagName);
+    if(e.key==='/' && !digitando){
+      e.preventDefault(); busca.focus();
+      busca.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+    if(e.key==='Escape' && document.activeElement===busca){
+      busca.value=''; filtrar(); busca.blur();
+    }
+  });
+
+  // Clicar em qualquer código de atalho copia para a área de transferência
+  document.querySelectorAll('main .cod').forEach(cod=>{
+    cod.style.cursor='copy';
+    cod.title='Clique para copiar';
+    cod.addEventListener('click', e=>{
+      e.stopPropagation();
+      navigator.clipboard.writeText(cod.textContent).then(()=>{
+        const original = cod.textContent;
+        cod.textContent = '✓ copiado';
+        setTimeout(()=>{ cod.textContent = original; }, 900);
+      }).catch(()=>{});
+    });
+  });
+
+  // ---------- Checklist interativo (agora com memória) ----------
+  const itens = document.querySelectorAll('.check-item');
+  const CK_KEY = 'blue_checklist_confirmacao';
+  function salvaChecklist(){
+    const estado = Array.from(itens).map(i=>i.classList.contains('feito')?1:0);
+    localStorage.setItem(CK_KEY, JSON.stringify(estado));
+  }
+  try{
+    const salvo = JSON.parse(localStorage.getItem(CK_KEY)||'[]');
+    itens.forEach((i,ix)=>{ if(salvo[ix]) i.classList.add('feito'); });
+  }catch(e){}
+  itens.forEach(item=>{
+    const toggle = ()=>{ item.classList.toggle('feito'); salvaChecklist(); };
+    item.addEventListener('click', toggle);
+    item.addEventListener('keydown', e=>{
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); }
+    });
+  });
+  document.getElementById('resetCheck').addEventListener('click', ()=>{
+    itens.forEach(i=>i.classList.remove('feito'));
+    salvaChecklist();
+  });
+
+  // ---------- Assistente IA (Gemini) ----------
+  const iaBtn = document.getElementById('iaBtn');
+  const iaPainel = document.getElementById('iaPainel');
+  const iaCorpo = document.getElementById('iaCorpo');
+  const iaInput = document.getElementById('iaInput');
+  const iaEnviar = document.getElementById('iaEnviar');
+  const iaStatus = document.getElementById('iaStatus');
+  const iaStatusTxt = document.getElementById('iaStatusTxt');
+  const historico = [];
+
+  function abrirIA(pergunta){
+    iaPainel.classList.add('aberto');
+    iaBtn.style.display='none';
+    if(pergunta){ iaInput.value = pergunta; enviarIA(); }
+    else iaInput.focus();
+  }
+  function fecharIA(){
+    iaPainel.classList.remove('aberto');
+    iaBtn.style.display='flex';
+  }
+  iaBtn.addEventListener('click', ()=>abrirIA());
+  document.getElementById('iaFechar').addEventListener('click', fecharIA);
+  document.getElementById('buscaZeroIA').addEventListener('click', ()=>{
+    abrirIA('Qual atalho eu uso nessa situação: ' + busca.value + '?');
+  });
+  document.getElementById('iaSugestoes').addEventListener('click', e=>{
+    if(e.target.tagName==='BUTTON'){ iaInput.value = e.target.textContent; enviarIA(); }
+  });
+  document.getElementById('iaChave').addEventListener('click', ()=>{
+    window.GeminiBlue.configurarChave();
+    atualizaStatus();
+  });
+
+  function bolha(texto, classe){
+    const div = document.createElement('div');
+    div.className = 'ia-msg ' + classe;
+    if(classe==='bot'){
+      // Destaca códigos de atalho conhecidos na resposta
+      let html = texto.replace(/[&<>]/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]));
+      html = html.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+      window.ATALHOS.forEach(a=>{
+        const cod = a.c.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+        html = html.replace(new RegExp('(?<![\\w>])'+cod+'(?![\\w<])','g'), '<span class="cod">'+a.c+'</span>');
+      });
+      div.innerHTML = html;
+    } else {
+      div.textContent = texto;
+    }
+    iaCorpo.appendChild(div);
+    iaCorpo.scrollTop = iaCorpo.scrollHeight;
+    return div;
+  }
+
+  async function enviarIA(){
+    const pergunta = iaInput.value.trim();
+    if(!pergunta) return;
+    iaInput.value='';
+    iaEnviar.disabled = true;
+    bolha(pergunta, 'eu');
+    const pensando = bolha('Pensando na melhor jogada…', 'pensando');
+    try{
+      const resposta = await window.GeminiBlue.perguntar(pergunta, historico);
+      pensando.remove();
+      bolha(resposta, 'bot');
+      historico.push({eu: pergunta, bot: resposta});
+      if(historico.length>6) historico.shift();
+    }catch(err){
+      pensando.remove();
+      bolha('Não consegui falar com a IA agora. ' + (err && err.message ? err.message : 'Verifique a conexão ou a chave da API em "Configurar chave".'), 'bot');
+    }
+    iaEnviar.disabled = false;
+    atualizaStatus();
+    iaInput.focus();
+  }
+  iaEnviar.addEventListener('click', enviarIA);
+  iaInput.addEventListener('keydown', e=>{
+    if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); enviarIA(); }
+  });
+
+  async function atualizaStatus(){
+    const modo = await window.GeminiBlue.statusConexao();
+    if(modo==='netlify'){ iaStatus.classList.add('on'); iaStatusTxt.textContent='IA conectada (servidor seguro)'; }
+    else if(modo==='chave'){ iaStatus.classList.add('on'); iaStatusTxt.textContent='IA conectada (chave local)'; }
+    else { iaStatus.classList.remove('on'); iaStatusTxt.textContent='IA sem conexão — configure a chave ou publique no Netlify'; }
+  }
+  atualizaStatus();
+</script>
+</body>
+</html>
