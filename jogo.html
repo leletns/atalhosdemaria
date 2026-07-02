@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>blue. — Arena de treino · Atalhos Comercial 1</title>
+<title>blue. — Central da Comercial · Banco de dados & Arena de treino</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -27,7 +27,7 @@
   html{scroll-behavior:smooth}
   body{font-family:'Montserrat',sans-serif;background:var(--creme);color:var(--tinta);line-height:1.6;font-size:15px}
   ::selection{background:var(--azul);color:#fff}
-  .wrap{max-width:860px;margin:0 auto;padding:0 24px}
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px}
 
   header{background:linear-gradient(135deg,var(--tinta) 0%, #2E4A6B 60%, var(--azul-forte) 100%);color:#fff;padding:44px 0 96px;position:relative;overflow:hidden}
   header::after{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;background:rgba(255,255,255,.05)}
@@ -36,7 +36,7 @@
   .marca span{color:var(--azul)}
   .eyebrow{text-transform:uppercase;letter-spacing:.28em;font-size:11px;font-weight:600;opacity:.75;margin:28px 0 10px}
   h1{font-weight:800;font-size:clamp(26px,4vw,38px);line-height:1.12;letter-spacing:-1px}
-  .sub{margin-top:12px;font-weight:300;font-size:15px;opacity:.85;max-width:600px}
+  .sub{margin-top:12px;font-weight:300;font-size:15px;opacity:.85;max-width:620px}
   .voltar{display:inline-flex;align-items:center;gap:7px;margin-top:20px;color:#fff;text-decoration:none;font-size:12.5px;font-weight:700;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:8px 18px;transition:.2s;position:relative;z-index:2}
   .voltar:hover{background:rgba(255,255,255,.28)}
 
@@ -58,17 +58,43 @@
   h2{font-weight:700;font-size:22px;letter-spacing:-.4px}
   .sec-desc{color:#5C6B7E;font-weight:300;margin-bottom:20px;max-width:680px}
 
+  /* ---------- CONSULTA RÁPIDA (banco de dados) ---------- */
+  .consulta-busca{background:var(--branco);border:1px solid var(--areia);border-radius:16px;box-shadow:0 2px 10px rgba(34,52,74,.05);padding:14px 18px;display:flex;gap:12px;align-items:center;margin-bottom:16px}
+  .consulta-busca svg{width:19px;height:19px;flex-shrink:0;stroke:var(--azul-forte)}
+  .consulta-busca input{flex:1;border:none;outline:none;font-family:inherit;font-size:15px;color:var(--tinta);background:transparent}
+  .consulta-busca input::placeholder{color:#9AA7B6}
+  .cats{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}
+  .cats button{background:var(--branco);border:1px solid var(--areia);border-radius:99px;padding:6px 15px;font-family:inherit;font-size:11.5px;font-weight:700;color:var(--azul-forte);cursor:pointer;transition:.2s;text-transform:capitalize}
+  .cats button:hover{border-color:var(--azul)}
+  .cats button.on{background:var(--azul-forte);color:#fff;border-color:var(--azul-forte)}
+  .ficha-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+  .ficha-card{background:var(--branco);border:1px solid var(--areia);border-radius:16px;padding:20px 22px;transition:.2s}
+  .ficha-card:hover{border-color:var(--azul);box-shadow:var(--sombra)}
+  .ficha-card.oculta{display:none}
+  .ficha-card .cat-pill{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border-radius:6px;padding:2px 9px;margin-bottom:8px}
+  .ficha-card .cat-pill.clinica{background:var(--nevoa);color:var(--azul-forte)}
+  .ficha-card .cat-pill.valores{background:var(--ambar-suave);color:var(--ambar)}
+  .ficha-card .cat-pill.metodo{background:var(--verde-suave);color:var(--verde)}
+  .ficha-card h3{font-size:15px;font-weight:800;margin-bottom:8px}
+  .ficha-card .corpo{font-size:12.5px;color:#4A5A6E;line-height:1.6;display:none}
+  .ficha-card.aberta .corpo{display:block}
+  .ficha-card .abrir{margin-top:6px;font-size:11.5px;font-weight:700;color:var(--azul-forte);cursor:pointer;background:none;border:none;font-family:inherit;padding:0}
+  .ficha-card .corpo .cod{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11.5px;font-weight:600;color:var(--azul-forte);background:var(--nevoa);border-radius:6px;padding:2px 7px;white-space:nowrap}
+  .sem-resultado{display:none;text-align:center;color:#8A96A5;font-size:13.5px;padding:20px}
+  .sem-resultado.on{display:block}
+
   /* ---------- MENU DE MODOS ---------- */
-  .modos{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+  .modos{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
   .modo{background:var(--branco);border:1px solid var(--areia);border-radius:18px;padding:24px 22px;cursor:pointer;transition:.2s;position:relative;overflow:hidden;text-align:left;font-family:inherit}
   .modo:hover{border-color:var(--azul);transform:translateY(-3px);box-shadow:var(--sombra)}
+  .modo.destaque{border:2px solid var(--azul-forte)}
   .modo .emoji{font-size:30px}
-  .modo h3{font-size:16px;font-weight:800;margin:10px 0 4px}
+  .modo h3{font-size:16px;font-weight:800;margin:10px 0 4px;color:var(--tinta)}
   .modo p{font-size:12.5px;color:#75828F;line-height:1.5}
   .modo .selo-modo{position:absolute;top:14px;right:14px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border-radius:6px;padding:3px 9px}
+  .modo .selo-modo.principal{background:var(--nevoa);color:var(--azul-forte)}
   .modo .selo-modo.facil{background:var(--verde-suave);color:var(--verde)}
   .modo .selo-modo.medio{background:var(--ambar-suave);color:var(--ambar)}
-  .modo .selo-modo.dificil{background:var(--coral-suave);color:var(--coral)}
   .modo .selo-modo.ia{background:var(--nevoa);color:var(--azul-forte)}
   .modo .recorde{display:inline-block;margin-top:10px;font-size:11px;font-weight:700;color:var(--azul-forte);background:var(--nevoa);border-radius:6px;padding:2px 9px}
 
@@ -88,17 +114,24 @@
   .situacao .etapa-dica{margin-top:8px;font-size:12px;color:#8A96A5}
 
   .opcoes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .opcoes.coluna{grid-template-columns:1fr}
   @media (max-width:560px){.opcoes{grid-template-columns:1fr}}
   .opcao{background:var(--branco);border:2px solid var(--areia);border-radius:13px;padding:14px 16px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:13.5px;font-weight:600;color:var(--azul-forte);cursor:pointer;transition:.15s;text-align:left;word-break:break-word}
+  .opcao.texto{font-family:'Montserrat',sans-serif;font-weight:600;color:var(--tinta);font-size:13.5px;line-height:1.55}
   .opcao:hover:not(:disabled){border-color:var(--azul);transform:translateY(-2px)}
   .opcao:disabled{cursor:default}
-  .opcao.certa{border-color:var(--verde);background:var(--verde-suave);color:var(--verde)}
-  .opcao.errada{border-color:var(--coral);background:var(--coral-suave);color:var(--coral)}
+  .opcao.certa{border-color:var(--verde);background:var(--verde-suave)}
+  .opcao.certa.texto{color:var(--verde)}
+  .opcao.errada{border-color:var(--coral);background:var(--coral-suave)}
+  .opcao.errada.texto{color:var(--coral)}
+  .opcao.meio-certa{border-color:var(--ambar);background:var(--ambar-suave)}
 
   .feedback{margin-top:16px;border-radius:0 10px 10px 0;padding:13px 16px;font-size:13px;display:none}
   .feedback.on{display:block}
   .feedback.ok{background:var(--verde-suave);border-left:3px solid var(--verde)}
   .feedback.ok b{color:var(--verde)}
+  .feedback.meio{background:var(--ambar-suave);border-left:3px solid var(--ambar)}
+  .feedback.meio b{color:var(--ambar)}
   .feedback.erro{background:var(--coral-suave);border-left:3px solid var(--coral)}
   .feedback.erro b{color:var(--coral)}
   .feedback .cod{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;font-weight:600;color:var(--azul-forte);background:var(--nevoa);border-radius:6px;padding:2px 8px;white-space:nowrap}
@@ -108,6 +141,14 @@
   .btn.fantasma{background:none;color:var(--azul-forte);border:1px solid var(--areia)}
   .btn.fantasma:hover{border-color:var(--azul-forte);background:var(--nevoa)}
   .acoes{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+
+  /* ---------- CONVERSA GUIADA ---------- */
+  .conv-chat{display:flex;flex-direction:column;gap:10px;background:var(--creme);border:1px solid var(--areia);border-radius:16px;padding:16px;margin-bottom:16px;max-height:340px;overflow-y:auto}
+  .conv-chat .msg{max-width:86%;padding:11px 14px;border-radius:15px;font-size:13.5px;line-height:1.5;white-space:pre-wrap}
+  .conv-chat .lead{align-self:flex-start;background:var(--branco);border:1px solid var(--areia);border-bottom-left-radius:5px}
+  .conv-chat .maria{align-self:flex-end;background:var(--azul-forte);color:#fff;border-bottom-right-radius:5px}
+  .conv-perfil{font-size:12px;color:#8A96A5;margin-bottom:12px}
+  .conv-pergunta{font-size:13px;font-weight:700;color:var(--azul-forte);margin-bottom:10px}
 
   /* ---------- SEQUÊNCIA ---------- */
   .seq-alvo,.seq-banco{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;border:2px dashed var(--areia);border-radius:14px;padding:10px;margin-bottom:12px;align-items:center}
@@ -138,7 +179,7 @@
   .resultado{text-align:center;padding:20px 10px}
   .resultado .grande{font-size:52px}
   .resultado h3{font-size:24px;font-weight:800;margin:10px 0 4px}
-  .resultado p{color:#5C6B7E;max-width:440px;margin:0 auto 6px}
+  .resultado p{color:#5C6B7E;max-width:460px;margin:0 auto 6px}
   .resultado .pontos-finais{font-size:34px;font-weight:800;color:var(--azul-forte);margin:12px 0}
   .resultado .novo-recorde{display:inline-block;font-size:12px;font-weight:800;color:var(--ambar);background:var(--ambar-suave);border-radius:99px;padding:6px 18px;margin-bottom:10px}
 
@@ -156,10 +197,10 @@
 <header>
   <div class="wrap">
     <div class="marca">blue<span>.</span></div>
-    <div class="eyebrow">Arena de treino · Comercial 1</div>
-    <h1>Treine os atalhos como um jogo 🎮</h1>
-    <p class="sub">Situações reais de atendimento, tempo, pontos e níveis. Quanto mais você treina aqui, mais rápido responde na vida real — e velocidade fecha venda.</p>
-    <a class="voltar" href="index.html">← Voltar ao playbook</a>
+    <div class="eyebrow">Central da Comercial 1 · Uso interno</div>
+    <h1>Seu banco de dados vivo — para consultar, prospectar e treinar 🧠</h1>
+    <p class="sub">Tudo sobre a Blue, o Dr. Rafael, valores, protocolos e o método de conversa — para consultar em tempo real durante o atendimento. E uma arena de jogos para você dominar isso tudo sem depender de script.</p>
+    <a class="voltar" href="index.html">← Voltar ao playbook de atalhos</a>
   </div>
 </header>
 
@@ -175,43 +216,75 @@
 
 <main class="wrap">
 
+  <!-- ================= CONSULTA RÁPIDA ================= -->
+  <section id="consulta">
+    <div class="sec-head"><span class="sec-num">BANCO DE DADOS</span><h2>Consulta rápida — enquanto você atende</h2></div>
+    <p class="sec-desc">A lead perguntou algo e você travou? Digite aqui e a resposta aparece na hora: valores, protocolos, quem é o Dr. Rafael, como responder objeções. <b>Use com a conversa aberta do lado.</b></p>
+    <div class="consulta-busca">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="fichaBusca" type="text" placeholder="ex.: quanto custa a cirurgia, plano de saúde, medo de pele irregular, quem é o rafael…" autocomplete="off">
+    </div>
+    <div class="cats" id="fichaCats">
+      <button class="on" data-cat="todas">Tudo</button>
+      <button data-cat="clínica">A Blue & Dr. Rafael</button>
+      <button data-cat="valores">Valores & pagamento</button>
+      <button data-cat="método">Método & objeções</button>
+    </div>
+    <div class="ficha-grid" id="fichaGrid"></div>
+    <p class="sem-resultado" id="fichaVazio">Nada encontrado com essas palavras — tente um termo mais simples (ex.: "caro", "plano", "cirurgia") ou pergunte à IA no playbook.</p>
+  </section>
+
   <!-- ================= MENU ================= -->
   <section id="menu">
-    <div class="sec-head"><span class="sec-num">MODOS</span><h2>Escolha seu treino</h2></div>
-    <p class="sec-desc">Cada modo treina um músculo diferente. Comece pela Jornada, evolua para o Relâmpago e, quando estiver afiada, enfrente a lead de IA no Simulador.</p>
+    <div class="sec-head"><span class="sec-num">ARENA</span><h2>Treine até virar segunda natureza</h2></div>
+    <p class="sec-desc">O objetivo não é decorar script — é <b>dominar o negócio e a conversa</b>. Comece pelo Quiz Blue e pela Conversa Guiada; os treinos de atalho são o complemento.</p>
     <div class="modos">
-      <button class="modo" data-modo="jornada">
-        <span class="selo-modo facil">Base</span>
-        <span class="emoji">🗺️</span>
-        <h3>Jornada</h3>
-        <p>10 situações reais, sem tempo. Escolha o atalho certo e aprenda com o feedback de cada resposta.</p>
-        <span class="recorde" id="recJornada">Recorde: —</span>
+      <button class="modo destaque" data-modo="saber">
+        <span class="selo-modo principal">Principal</span>
+        <span class="emoji">🧠</span>
+        <h3>Quiz Blue</h3>
+        <p>Clínica, Dr. Rafael, valores, protocolos, compliance e método. O conhecimento que te deixa segura em QUALQUER pergunta da lead.</p>
+        <span class="recorde" id="recSaber">Recorde: —</span>
       </button>
-      <button class="modo" data-modo="relampago">
-        <span class="selo-modo medio">Velocidade</span>
-        <span class="emoji">⚡</span>
-        <h3>Relâmpago</h3>
-        <p>90 segundos no relógio. Acerte o máximo que conseguir — velocidade é o que fecha lead de tráfego.</p>
-        <span class="recorde" id="recRelampago">Recorde: —</span>
-      </button>
-      <button class="modo" data-modo="sequencia">
-        <span class="selo-modo dificil">Estratégia</span>
-        <span class="emoji">🧩</span>
-        <h3>Sequência perfeita</h3>
-        <p>Monte as receitas que convertem na ordem exata. Valor antes de preço, sempre.</p>
-        <span class="recorde" id="recSequencia">Recorde: —</span>
+      <button class="modo destaque" data-modo="conversa">
+        <span class="selo-modo principal">Principal</span>
+        <span class="emoji">💬</span>
+        <h3>Conversa guiada</h3>
+        <p>Conversas reais, do "oi" ao Pix. Escolha a melhor resposta em cada momento e aprenda a conduzir sem depender de script.</p>
+        <span class="recorde" id="recConversa">Recorde: —</span>
       </button>
       <button class="modo" data-modo="simulador">
         <span class="selo-modo ia">Gemini ✨</span>
         <span class="emoji">🤖</span>
         <h3>Simulador de lead</h3>
-        <p>A IA vira uma lead de verdade — com dúvidas, objeções e pressa. Atenda, e o coach avalia cada resposta sua.</p>
+        <p>A IA vira uma lead de verdade — com dúvidas, objeções e pressa. Atenda com suas palavras e o coach avalia cada resposta.</p>
         <span class="recorde" id="recSimulador">Melhor nota: —</span>
+      </button>
+      <button class="modo" data-modo="jornada">
+        <span class="selo-modo facil">Atalhos</span>
+        <span class="emoji">🗺️</span>
+        <h3>Jornada dos atalhos</h3>
+        <p>10 situações, escolha o atalho certo. Para responder rápido quando o script ajudar.</p>
+        <span class="recorde" id="recJornada">Recorde: —</span>
+      </button>
+      <button class="modo" data-modo="relampago">
+        <span class="selo-modo medio">Atalhos</span>
+        <span class="emoji">⚡</span>
+        <h3>Relâmpago</h3>
+        <p>90 segundos no relógio. Acerte o máximo de atalhos que conseguir.</p>
+        <span class="recorde" id="recRelampago">Recorde: —</span>
+      </button>
+      <button class="modo" data-modo="sequencia">
+        <span class="selo-modo medio">Atalhos</span>
+        <span class="emoji">🧩</span>
+        <h3>Sequência perfeita</h3>
+        <p>Monte as receitas que convertem na ordem exata. Valor antes de preço, sempre.</p>
+        <span class="recorde" id="recSequencia">Recorde: —</span>
       </button>
     </div>
   </section>
 
-  <!-- ================= PALCO QUIZ (Jornada + Relâmpago) ================= -->
+  <!-- ================= PALCO QUIZ ATALHOS (Jornada + Relâmpago) ================= -->
   <section class="palco" id="palcoQuiz">
     <div class="palco-top">
       <h3 id="quizTitulo">Jornada</h3>
@@ -227,6 +300,37 @@
     <div class="opcoes" id="quizOpcoes"></div>
     <div class="feedback" id="quizFeedback"></div>
     <div class="acoes"><button class="btn" id="quizProxima" style="display:none">Próxima →</button></div>
+  </section>
+
+  <!-- ================= PALCO QUIZ BLUE (conhecimento) ================= -->
+  <section class="palco" id="palcoSaber">
+    <div class="palco-top">
+      <h3>Quiz Blue 🧠</h3>
+      <span class="rodada" id="saberRodada">1 / 12</span>
+      <button class="sair" data-sair>Sair</button>
+    </div>
+    <div class="situacao">
+      <div class="rotulo" id="saberCat">Conhecimento</div>
+      <div class="texto" id="saberPergunta"></div>
+    </div>
+    <div class="opcoes coluna" id="saberOpcoes"></div>
+    <div class="feedback" id="saberFeedback"></div>
+    <div class="acoes"><button class="btn" id="saberProxima" style="display:none">Próxima →</button></div>
+  </section>
+
+  <!-- ================= PALCO CONVERSA GUIADA ================= -->
+  <section class="palco" id="palcoConversa">
+    <div class="palco-top">
+      <h3>Conversa guiada 💬</h3>
+      <span class="rodada" id="convRodada"></span>
+      <button class="sair" data-sair>Sair</button>
+    </div>
+    <p class="conv-perfil" id="convPerfil"></p>
+    <div class="conv-chat" id="convChat"></div>
+    <p class="conv-pergunta" id="convPergunta">O que você responde?</p>
+    <div class="opcoes coluna" id="convOpcoes"></div>
+    <div class="feedback" id="convFeedback"></div>
+    <div class="acoes"><button class="btn" id="convProxima" style="display:none">Continuar →</button></div>
   </section>
 
   <!-- ================= PALCO SEQUÊNCIA ================= -->
@@ -259,7 +363,7 @@
     </div>
     <div class="chat" id="simChat"></div>
     <div class="sim-input">
-      <textarea id="simInput" rows="2" placeholder="Responda como responderia no WhatsApp… cite o atalho que usaria entre colchetes, ex.: [sobreorafa] + sua mensagem"></textarea>
+      <textarea id="simInput" rows="2" placeholder="Responda com as SUAS palavras, como no WhatsApp de verdade…"></textarea>
       <button class="btn" id="simEnviar">Enviar</button>
     </div>
     <div class="acoes">
@@ -285,16 +389,65 @@
 
   <footer>
     <div class="marca">blue<span style="color:var(--azul)">.</span></div>
-    <p style="margin-top:8px">Arena de treino · Blue Clínica — treinamento interno do time comercial</p>
+    <p style="margin-top:8px">Central da Comercial · Blue Clínica — treinamento interno do time comercial</p>
   </footer>
 </main>
 
 <script src="assets/atalhos.js"></script>
+<script src="assets/conhecimento.js"></script>
 <script src="assets/gemini.js"></script>
 <script>
 (function(){
   const $ = id => document.getElementById(id);
   const embaralha = arr => arr.slice().sort(()=>Math.random()-.5);
+  const norm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
+
+  /* ================= CONSULTA RÁPIDA (banco de dados) ================= */
+  const catClasse = { "clínica":"clinica", "valores":"valores", "método":"metodo" };
+  const catRotulo = { "clínica":"A Blue & Dr. Rafael", "valores":"Valores & pagamento", "método":"Método & objeções" };
+  let catAtiva = 'todas';
+
+  const grid = $('fichaGrid');
+  window.FICHA.forEach((f,ix)=>{
+    const card = document.createElement('article');
+    card.className = 'ficha-card';
+    card.dataset.cat = f.cat;
+    card.dataset.busca = norm(f.t + ' ' + f.tags + ' ' + f.corpo.replace(/<[^>]+>/g,' '));
+    card.innerHTML = '<span class="cat-pill '+catClasse[f.cat]+'">'+catRotulo[f.cat]+'</span>'
+      + '<h3>'+f.t+'</h3>'
+      + '<div class="corpo">'+f.corpo+'</div>'
+      + '<button class="abrir" type="button">ver resposta completa ↓</button>';
+    const btn = card.querySelector('.abrir');
+    btn.addEventListener('click', ()=>{
+      card.classList.toggle('aberta');
+      btn.textContent = card.classList.contains('aberta') ? 'fechar ↑' : 'ver resposta completa ↓';
+    });
+    grid.appendChild(card);
+  });
+  const cards = Array.from(grid.children);
+
+  function filtraFicha(){
+    const q = norm($('fichaBusca').value);
+    const termos = q.split(' ').filter(Boolean);
+    let visiveis = 0;
+    cards.forEach(c=>{
+      const bateCat = catAtiva==='todas' || c.dataset.cat===catAtiva;
+      const bateBusca = !termos.length || termos.every(t=>c.dataset.busca.includes(t));
+      const mostra = bateCat && bateBusca;
+      c.classList.toggle('oculta', !mostra);
+      if(mostra) visiveis++;
+      // com busca ativa, abre os cards automaticamente para a resposta aparecer na hora
+      if(mostra && termos.length){ c.classList.add('aberta'); c.querySelector('.abrir').textContent='fechar ↑'; }
+    });
+    $('fichaVazio').classList.toggle('on', visiveis===0);
+  }
+  $('fichaBusca').addEventListener('input', filtraFicha);
+  $('fichaCats').addEventListener('click', e=>{
+    if(e.target.tagName!=='BUTTON') return;
+    catAtiva = e.target.dataset.cat;
+    Array.from($('fichaCats').children).forEach(b=>b.classList.toggle('on', b===e.target));
+    filtraFicha();
+  });
 
   /* ================= PROGRESSO E PLACAR ================= */
   const SALVO = 'blue_arena_progresso';
@@ -335,6 +488,8 @@
   }
   function mostraRecordes(){
     const r = prog.recordes;
+    $('recSaber').textContent     = 'Recorde: ' + (r.saber     != null ? r.saber+' pts'     : '—');
+    $('recConversa').textContent  = 'Recorde: ' + (r.conversa  != null ? r.conversa+' pts'  : '—');
     $('recJornada').textContent   = 'Recorde: ' + (r.jornada   != null ? r.jornada+' pts'   : '—');
     $('recRelampago').textContent = 'Recorde: ' + (r.relampago != null ? r.relampago+' pts' : '—');
     $('recSequencia').textContent = 'Recorde: ' + (r.sequencia != null ? r.sequencia+' pts' : '—');
@@ -342,10 +497,11 @@
   }
 
   /* ================= NAVEGAÇÃO ENTRE PALCOS ================= */
-  const palcos = ['menu','palcoQuiz','palcoSeq','palcoSim','palcoFim'];
+  const palcos = ['menu','palcoQuiz','palcoSaber','palcoConversa','palcoSeq','palcoSim','palcoFim'];
   let cronometro = null;
   function mostra(id){
     if(cronometro){ clearInterval(cronometro); cronometro=null; }
+    $('consulta').style.display = (id==='menu') ? '' : 'none';
     palcos.forEach(p=>{
       const el = $(p);
       if(p==='menu') el.style.display = (p===id)?'':'none';
@@ -356,16 +512,18 @@
   document.querySelectorAll('[data-sair]').forEach(b=>b.addEventListener('click', ()=>{ mostraRecordes(); mostra('menu'); }));
 
   let modoAtual = null;
+  function iniciaModo(){
+    pontos=0; sequencia=0; acertos=0; tentativas=0;
+    atualizaPlacar();
+    if(modoAtual==='saber')     comecaSaber();
+    if(modoAtual==='conversa')  comecaConversa();
+    if(modoAtual==='jornada')   comecaQuiz(false);
+    if(modoAtual==='relampago') comecaQuiz(true);
+    if(modoAtual==='sequencia') comecaSeq();
+    if(modoAtual==='simulador') comecaSim();
+  }
   document.querySelectorAll('.modo').forEach(m=>{
-    m.addEventListener('click', ()=>{
-      modoAtual = m.dataset.modo;
-      pontos=0; sequencia=0; acertos=0; tentativas=0;
-      atualizaPlacar();
-      if(modoAtual==='jornada')   comecaQuiz(false);
-      if(modoAtual==='relampago') comecaQuiz(true);
-      if(modoAtual==='sequencia') comecaSeq();
-      if(modoAtual==='simulador') comecaSim();
-    });
+    m.addEventListener('click', ()=>{ modoAtual = m.dataset.modo; iniciaModo(); });
   });
 
   function terminaJogo(chave, valor, unidade, titulo, msg, emoji){
@@ -379,28 +537,161 @@
     $('fimMsg').textContent = msg;
     mostra('palcoFim');
   }
-  $('fimDeNovo').addEventListener('click', ()=>{
-    pontos=0; sequencia=0; acertos=0; tentativas=0;
-    atualizaPlacar();
-    if(modoAtual==='jornada')   comecaQuiz(false);
-    else if(modoAtual==='relampago') comecaQuiz(true);
-    else if(modoAtual==='sequencia') comecaSeq();
-    else if(modoAtual==='simulador') comecaSim();
-  });
+  $('fimDeNovo').addEventListener('click', iniciaModo);
 
-  /* ================= QUIZ (Jornada / Relâmpago) ================= */
+  /* ================= QUIZ BLUE (conhecimento) ================= */
+  const SABER_RODADAS = 12;
+  let saberFila=[], saberRodada=0, saberTravado=false;
+
+  function comecaSaber(){
+    saberFila = embaralha(window.QUIZ_BLUE);
+    saberRodada = 0;
+    mostra('palcoSaber');
+    proximaSaber();
+  }
+  function proximaSaber(){
+    saberTravado = false;
+    if(saberRodada>=SABER_RODADAS || saberFila.length===0){
+      terminaJogo('saber', pontos, 'pts', 'Quiz Blue concluído!',
+        'Precisão de ' + Math.round(100*acertos/Math.max(1,tentativas)) + '%. Esse conhecimento é o que te deixa segura em qualquer pergunta — sem precisar de script. Repita até cravar 100%.', '🧠');
+      return;
+    }
+    const q = saberFila.pop();
+    saberRodada++;
+    $('saberRodada').textContent = saberRodada + ' / ' + SABER_RODADAS;
+    $('saberCat').textContent = q.cat;
+    $('saberPergunta').textContent = q.p;
+    $('saberFeedback').className='feedback';
+    $('saberProxima').style.display='none';
+
+    const box = $('saberOpcoes');
+    box.innerHTML='';
+    const ordem = embaralha(q.ops.map((t,i)=>({t, certa: i===q.certa})));
+    ordem.forEach(op=>{
+      const b = document.createElement('button');
+      b.className='opcao texto';
+      b.textContent = op.t;
+      b.addEventListener('click', ()=>{
+        if(saberTravado) return;
+        saberTravado = true;
+        tentativas++;
+        Array.from(box.children).forEach(o=>{ o.disabled=true; });
+        const fb = $('saberFeedback');
+        if(op.certa){
+          acertos++; sequencia++;
+          b.classList.add('certa');
+          const bonus = Math.min(sequencia,5)*5;
+          ganhaPontos(25+bonus);
+          fb.className='feedback on ok';
+          fb.innerHTML='<b>Exato! +'+(25+bonus)+' pts.</b> '+q.explica;
+        } else {
+          sequencia=0;
+          b.classList.add('errada');
+          Array.from(box.children).forEach(o=>{ if(ordem[Array.from(box.children).indexOf(o)].certa) o.classList.add('certa'); });
+          atualizaPlacar();
+          fb.className='feedback on erro';
+          fb.innerHTML='<b>Não é essa.</b> '+q.explica;
+        }
+        $('saberProxima').style.display='inline-block';
+      });
+      box.appendChild(b);
+    });
+  }
+  $('saberProxima').addEventListener('click', proximaSaber);
+
+  /* ================= CONVERSA GUIADA ================= */
+  let convCenario=null, convPasso=0, convPts=0, convMax=0, convTravado=false, convFila=[];
+
+  function comecaConversa(){
+    convFila = embaralha(window.CONVERSAS);
+    convCenario = convFila[0];
+    convPasso = 0; convPts = 0;
+    convMax = convCenario.passos.length*2;
+    $('convPerfil').textContent = 'Lead: ' + convCenario.perfil;
+    $('convChat').innerHTML='';
+    mostra('palcoConversa');
+    proximaConversa();
+  }
+  function convBolha(texto, classe){
+    const div = document.createElement('div');
+    div.className = 'msg ' + classe;
+    div.textContent = texto;
+    $('convChat').appendChild(div);
+    $('convChat').scrollTop = $('convChat').scrollHeight;
+  }
+  function proximaConversa(){
+    convTravado = false;
+    if(convPasso>=convCenario.passos.length){
+      const nota = Math.round(100*convPts/convMax);
+      const bonusFinal = nota===100 ? 50 : 0;
+      if(bonusFinal) ganhaPontos(bonusFinal);
+      terminaJogo('conversa', pontos, 'pts',
+        nota===100 ? 'Conversa impecável!' : nota>=70 ? 'Boa condução!' : 'Conversa para revisar',
+        'Você conduziu "'+convCenario.nome+'" com '+nota+'% de decisões de elite'+(bonusFinal?' (+50 de bônus por conversa perfeita!)':'')+'. Jogue de novo: os cenários mudam a cada rodada.',
+        nota===100 ? '🏆' : nota>=70 ? '💪' : '📚');
+      return;
+    }
+    const passo = convCenario.passos[convPasso];
+    $('convRodada').textContent = 'Mensagem ' + (convPasso+1) + ' de ' + convCenario.passos.length;
+    convBolha(passo.lead, 'lead');
+    $('convFeedback').className='feedback';
+    $('convProxima').style.display='none';
+    $('convPergunta').style.display='';
+
+    const box = $('convOpcoes');
+    box.innerHTML='';
+    embaralha(passo.ops).forEach(op=>{
+      const b = document.createElement('button');
+      b.className='opcao texto';
+      b.textContent = op.t;
+      b.addEventListener('click', ()=>{
+        if(convTravado) return;
+        convTravado = true;
+        tentativas++;
+        Array.from(box.children).forEach(o=>o.disabled=true);
+        convPts += op.pts;
+        const fb = $('convFeedback');
+        if(op.pts===2){
+          acertos++; sequencia++;
+          b.classList.add('certa');
+          ganhaPontos(40 + Math.min(sequencia,5)*5);
+          fb.className='feedback on ok';
+          fb.innerHTML='<b>Decisão de elite! 💙</b> '+op.fb;
+        } else if(op.pts===1){
+          sequencia=0;
+          b.classList.add('meio-certa');
+          ganhaPontos(15);
+          fb.className='feedback on meio';
+          fb.innerHTML='<b>Quase lá.</b> '+op.fb;
+        } else {
+          sequencia=0;
+          b.classList.add('errada');
+          atualizaPlacar();
+          fb.className='feedback on erro';
+          fb.innerHTML='<b>Essa esfriaria a lead.</b> '+op.fb;
+        }
+        // registra a resposta escolhida no chat
+        convBolha(op.t, 'maria');
+        $('convPergunta').style.display='none';
+        box.innerHTML='';
+        $('convProxima').style.display='inline-block';
+      });
+      box.appendChild(b);
+    });
+  }
+  $('convProxima').addEventListener('click', ()=>{ convPasso++; proximaConversa(); });
+
+  /* ================= QUIZ DE ATALHOS (Jornada / Relâmpago) ================= */
   const A = window.ATALHOS, ET = window.ETAPAS;
   let fila=[], rodada=0, totalRodadas=10, tempoRestante=0, modoTempo=false, travado=false;
 
-  function novaFila(){
-    fila = embaralha(A);
-  }
+  function novaFila(){ fila = embaralha(A); }
   function comecaQuiz(comTempo){
     modoTempo = comTempo;
     rodada = 0;
     totalRodadas = comTempo ? Infinity : 10;
     novaFila();
-    $('quizTitulo').textContent = comTempo ? 'Relâmpago ⚡' : 'Jornada 🗺️';
+    $('quizTitulo').textContent = comTempo ? 'Relâmpago ⚡' : 'Jornada dos atalhos 🗺️';
     $('quizTempo').style.display = comTempo ? '' : 'none';
     if(comTempo){
       tempoRestante = 90;
@@ -435,7 +726,6 @@
     $('quizFeedback').className = 'feedback';
     $('quizProxima').style.display = 'none';
 
-    // Distratores: prioriza atalhos da mesma etapa (mais difíceis de distinguir)
     const mesmos = embaralha(A.filter(x=>x.e===alvo.e && x.c!==alvo.c));
     const outros = embaralha(A.filter(x=>x.e!==alvo.e));
     const distratores = mesmos.concat(outros).slice(0,3);
@@ -552,7 +842,6 @@
     tentativas++;
     const certos = seqResposta.filter((c,i)=>c===seqAtual.seq[i]).length;
     const perfeito = certos===seqAtual.seq.length;
-    // pinta as peças
     Array.from($('seqAlvo').querySelectorAll('.peca')).forEach((p,i)=>{
       p.classList.add(seqResposta[i]===seqAtual.seq[i]?'certa':'errada');
     });
@@ -586,7 +875,7 @@
     'MODO SIMULADOR DE TREINO: você vai interpretar UMA lead conversando por WhatsApp com a Maria (comercial da Clínica Blue).',
     'Responda SEMPRE neste formato JSON puro, sem markdown, sem crase: {"lead":"mensagem da lead","coach":"análise curta da última resposta da Maria","nota":0}',
     '- "lead": a próxima mensagem da lead (natural, humana, curta como no WhatsApp, com a personalidade do perfil).',
-    '- "coach": 1 a 2 frases avaliando a última resposta da Maria segundo o playbook (atalho certo? terminou com pergunta? valor antes de preço? personalizou?). Na primeira mensagem, deixe "".',
+    '- "coach": 1 a 2 frases avaliando a última resposta da Maria segundo o playbook (acolheu? terminou com pergunta? valor antes de preço? personalizou? respeitou o compliance?). Na primeira mensagem, deixe "".',
     '- "nota": de 0 a 10 para a última resposta da Maria (0 na primeira mensagem).',
     'A lead NÃO conhece os atalhos — reaja apenas ao conteúdo. Se a Maria citar um atalho entre colchetes, trate como se ela tivesse enviado o texto daquele modelo.',
     'Nunca saia do personagem no campo "lead".'
@@ -626,7 +915,7 @@
       simBolha('Sem conexão com a IA por enquanto. Configure a chave ali embaixo e recomece o simulador. 💙','coach');
       return;
     }
-    $('simAviso').textContent='Dica: cite o atalho que usaria entre colchetes, ex.: [empatia] + sua mensagem personalizada.';
+    $('simAviso').textContent='Responda com as suas palavras. Se quiser usar um atalho, cite entre colchetes: [empatia] + sua mensagem personalizada.';
     const digitando = simBolha('A lead está entrando na conversa…','digitando');
     try{
       const resposta = await window.GeminiBlue.perguntar(
@@ -685,7 +974,7 @@
     const media = simNotas.length ? Math.round(10*simNotas.reduce((a,b)=>a+b,0)/simNotas.length)/10 : 0;
     terminaJogo('simulador', media, '/10', 'Atendimento avaliado!',
       simNotas.length
-        ? 'Nota média do coach nas suas ' + simNotas.length + ' respostas. Acima de 8 é atendimento de elite — abaixo disso, revise as regras de ouro e tente outro perfil de lead.'
+        ? 'Nota média do coach nas suas ' + simNotas.length + ' respostas. Acima de 8 é atendimento de elite — abaixo disso, revise o banco de dados e tente outro perfil de lead.'
         : 'A conversa terminou antes de o coach avaliar respostas. Tente de novo!',
       media>=8 ? '🏆' : media>=6 ? '💪' : '📚');
   }
