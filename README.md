@@ -8,11 +8,22 @@ assistente de IA (Gemini) e jogo de treino com 4 modos.
 | Arquivo | O que é |
 |---|---|
 | `index.html` | Playbook completo com busca inteligente por situação (a lupa) e assistente de IA flutuante |
-| `jogo.html` | Arena de treino: Jornada, Relâmpago, Sequência perfeita e Simulador de lead com IA |
+| `jogo.html` | Central da Comercial: banco de dados de consulta rápida + arena de treino |
+| `growth.html` | Growth Blue OS: dashboard de métricas com lançamento diário, tendências, pacing e alertas |
 | `assets/atalhos.js` | Base dos 81 atalhos com palavras-chave de situação (usada pela busca e pelo jogo) |
+| `assets/conhecimento.js` | Banco de conhecimento total (ficha, quiz e conversas guiadas) |
 | `assets/gemini.js` | Cliente do Gemini (usa o servidor do Netlify ou uma chave local) |
 | `netlify/functions/gemini.js` | Função do Netlify que guarda a chave da API em segurança no servidor |
+| `netlify/functions/growth-dados.mjs` | Função que salva os dados do growth na nuvem (Netlify Blobs), rota `/api/growth` |
 | `netlify.toml` | Configuração do deploy |
+
+## Growth Blue OS (growth.html)
+
+- **Lançamento diário** (aba ＋ LANÇAR): gasto, leads, agendamentos, consultas pagas e seguidores — 1 minuto por dia.
+- **Métricas calculadas automaticamente:** CPL, conversão lead→agendamento, custo por consulta paga, pacing da meta, projeção do mês, ROI e comparativos semanais e por campanha.
+- **Alertas automáticos:** motor de regras que aponta a ação do dia (CPL estourado, conversão baixa, pacing atrasado, verba mal distribuída, dias sem lançamento).
+- **Dados na nuvem:** tudo é salvo no próprio site via Netlify Blobs (rota `/api/growth`) e também no navegador (funciona offline). Backup exportável em JSON na aba ⚙︎.
+- **PIN opcional:** defina a variável de ambiente `GROWTH_PIN` no Netlify para exigir um PIN de acesso aos dados.
 
 ## Como subir no Netlify (vinculado ao repositório `atalhosdemaria`)
 

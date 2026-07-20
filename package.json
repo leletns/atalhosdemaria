@@ -1,0 +1,9 @@
+{
+  "name": "growth-blue-os",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Growth Blue OS — playbook comercial, arena de treino e dashboard de métricas",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}

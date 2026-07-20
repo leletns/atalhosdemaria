@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Growth Blue OS — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       DESIGN SYSTEM BLUE — Growth Blue OS
+       Paleta: #2b6cb8 (primária) · #1c4e8a (escura) · #f5f9fe (fundo)
+       ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --blue: #2b6cb8;
+      --blue-dark: #1c4e8a;
+      --blue-light: #4a90d9;
+      --bg: #f5f9fe;
+      --glass: rgba(255, 255, 255, 0.72);
+      --glass-border: rgba(255, 255, 255, 0.9);
+      --shadow: 0 8px 32px rgba(28, 78, 138, 0.08);
+      --text: #1a365d;
+      --text-muted: #5a7a9a;
+      --up: #2f9e44;
+      --down: #e03131;
+      --warn: #e67700;
+      --radius: 16px;
+      --mac-h: 36px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Montserrat', system-ui, sans-serif;
+      font-weight: 300;
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(43, 108, 184, 0.12), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(28, 78, 138, 0.06), transparent);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    .mac-bar {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      height: var(--mac-h);
+      background: linear-gradient(180deg, #e8eef5 0%, #dfe8f2 100%);
+      border-bottom: 1px solid rgba(28, 78, 138, 0.1);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 8px;
+    }
+    .mac-dots { display: flex; gap: 7px; }
+    .mac-dots span { width: 11px; height: 11px; border-radius: 50%; }
+    .mac-dots span:nth-child(1) { background: #ff5f57; }
+    .mac-dots span:nth-child(2) { background: #febc2e; }
+    .mac-dots span:nth-child(3) { background: #28c840; }
+    .mac-title {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+    .sync-chip {
+      font-size: 10px;
+      font-weight: 400;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(43,108,184,0.1);
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .sync-chip.ok { background: rgba(47,158,68,0.12); color: var(--up); }
+    .sync-chip.erro { background: rgba(230,119,0,0.12); color: var(--warn); }
+
+    .banner-vazio {
+      background: linear-gradient(90deg, var(--blue-dark), var(--blue));
+      color: #fff;
+      text-align: center;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+    }
+    .banner-vazio strong { font-weight: 500; text-decoration: underline; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+
+    header.hero { text-align: center; padding: 20px 0 8px; }
+    header.hero h1 {
+      font-size: clamp(1.4rem, 4vw, 1.9rem);
+      font-weight: 200;
+      color: var(--blue-dark);
+      letter-spacing: -0.02em;
+    }
+    header.hero p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 12px 0;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex-shrink: 0;
+      border: none;
+      background: rgba(255,255,255,0.5);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .tab-btn.active {
+      background: var(--blue);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(43, 108, 184, 0.35);
+    }
+    .tab-btn.lancar { border: 1px solid var(--blue-light); color: var(--blue); background: #fff; }
+    .tab-btn.lancar.active { background: var(--blue); color: #fff; }
+
+    .tab-panel { display: none; animation: fadeIn 0.3s ease; }
+    .tab-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    @media (min-width: 640px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+    .kpi-card { padding: 16px; position: relative; }
+    .kpi-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .kpi-value {
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      font-weight: 200;
+      color: var(--blue-dark);
+      margin: 6px 0 4px;
+    }
+    .kpi-delta { font-size: 11px; display: flex; align-items: center; gap: 4px; }
+    .kpi-delta.up { color: var(--up); }
+    .kpi-delta.down { color: var(--down); }
+
+    .btn-help {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 1px solid var(--blue-light);
+      background: transparent;
+      color: var(--blue);
+      font-size: 11px;
+      cursor: pointer;
+      line-height: 1;
+      font-family: inherit;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--blue-dark);
+      margin: 20px 0 12px;
+      letter-spacing: 0.04em;
+    }
+
+    .chart-wrap { padding: 16px; margin-bottom: 12px; }
+    .chart-wrap canvas { width: 100%; height: auto; display: block; }
+    .chart-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; font-size: 11px; color: var(--text-muted); }
+
+    .compare-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    @media (max-width: 480px) { .compare-row { grid-template-columns: 1fr; } }
+    .compare-box { padding: 16px; text-align: center; }
+    .compare-box .val { font-size: 1.6rem; font-weight: 200; color: var(--blue); }
+    .compare-box .lbl { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+    .pacing-bar-wrap { padding: 20px; margin-bottom: 12px; }
+    .pacing-track {
+      height: 24px;
+      background: rgba(43, 108, 184, 0.12);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 16px 0;
+    }
+    .pacing-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), var(--blue-light));
+      border-radius: 999px;
+      transition: width 0.6s ease;
+    }
+    .pacing-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); }
+    .pacing-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 16px; }
+    .pacing-stat {
+      padding: 12px;
+      background: rgba(43, 108, 184, 0.06);
+      border-radius: 12px;
+      text-align: center;
+    }
+    .pacing-stat .n { font-size: 1.3rem; font-weight: 200; color: var(--blue-dark); }
+    .pacing-stat .l { font-size: 10px; color: var(--text-muted); }
+
+    .aprender-list { display: flex; flex-direction: column; gap: 10px; }
+    .aprender-item {
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .aprender-item h3 { font-size: 14px; font-weight: 400; }
+    .aprender-item p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .alerta-card { padding: 16px; margin-bottom: 10px; border-left: 4px solid var(--blue); }
+    .alerta-card.atencao { border-left-color: var(--warn); }
+    .alerta-card.critico { border-left-color: var(--down); }
+    .alerta-card h3 { font-size: 14px; font-weight: 400; margin-bottom: 6px; }
+    .alerta-card p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .alerta-acao {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: rgba(43, 108, 184, 0.08);
+      border-radius: 10px;
+      font-size: 12px;
+      color: var(--blue-dark);
+    }
+
+    /* ── Formulários (aba LANÇAR) ── */
+    .form-card { padding: 20px; margin-bottom: 14px; }
+    .form-card h3 { font-size: 14px; font-weight: 400; color: var(--blue-dark); margin-bottom: 4px; }
+    .form-card .sub { font-size: 11px; color: var(--text-muted); margin-bottom: 14px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    @media (min-width: 640px) { .form-grid { grid-template-columns: repeat(3, 1fr); } }
+    .campo { display: flex; flex-direction: column; gap: 4px; }
+    .campo label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); }
+    .campo input, .campo select {
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text);
+      background: #fff;
+      border: 1px solid rgba(43,108,184,0.25);
+      border-radius: 10px;
+      padding: 10px 12px;
+      outline: none;
+      width: 100%;
+    }
+    .campo input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(43,108,184,0.12); }
+    .btn {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 22px;
+      cursor: pointer;
+      background: var(--blue);
+      color: #fff;
+      transition: 0.2s;
+      box-shadow: 0 4px 14px rgba(43,108,184,0.3);
+    }
+    .btn:hover { background: var(--blue-dark); }
+    .btn.suave { background: rgba(43,108,184,0.1); color: var(--blue-dark); box-shadow: none; }
+    .btn.suave:hover { background: rgba(43,108,184,0.2); }
+    .btn.perigo { background: rgba(224,49,49,0.1); color: var(--down); box-shadow: none; }
+    .form-acoes { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .form-ok {
+      display: none;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--up);
+      font-weight: 400;
+    }
+    .form-ok.on { display: block; }
+
+    table.mini { width: 100%; font-size: 12px; border-collapse: collapse; margin-top: 8px; }
+    table.mini th, table.mini td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid rgba(43, 108, 184, 0.1);
+    }
+    table.mini th { color: var(--text-muted); font-weight: 400; font-size: 10px; text-transform: uppercase; }
+    table.mini .acao-linha {
+      background: none; border: none; cursor: pointer; font-family: inherit;
+      font-size: 11px; color: var(--blue); padding: 2px 6px;
+    }
+    table.mini .acao-linha.del { color: var(--down); }
+    .tabela-scroll { overflow-x: auto; }
+
+    .vazio-msg { font-size: 12px; color: var(--text-muted); padding: 14px; text-align: center; }
+
+    /* Modal mentoria */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(28, 78, 138, 0.4);
+      backdrop-filter: blur(4px);
+      z-index: 300;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 20px 20px 16px 16px;
+      padding: 24px;
+      max-width: 480px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: none; } }
+    .modal h2 { font-size: 1.1rem; font-weight: 400; color: var(--blue-dark); }
+    .modal .bloco { margin-top: 14px; }
+    .modal .bloco h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--blue); margin-bottom: 4px; }
+    .modal .bloco p { font-size: 13px; line-height: 1.6; color: var(--text); }
+    .modal-close {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: var(--blue);
+      color: #fff;
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra macOS -->
+  <div class="mac-bar">
+    <div class="mac-dots"><span></span><span></span><span></span></div>
+    <div class="mac-title">Growth Blue OS</div>
+    <span class="sync-chip" id="sync-chip">carregando…</span>
+  </div>
+
+  <div class="banner-vazio" id="banner-vazio" style="display:none">
+    📊 Ainda sem dados — toque aqui e faça o <strong>primeiro lançamento do dia</strong> para o painel ganhar vida.
+  </div>
+
+  <div class="container">
+    <header class="hero">
+      <h1 id="hero-nome">Growth Blue OS</h1>
+      <p id="hero-sub"></p>
+    </header>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="hoje">HOJE</button>
+      <button class="tab-btn lancar" data-tab="lancar">＋ LANÇAR</button>
+      <button class="tab-btn" data-tab="tendencias">TENDÊNCIAS</button>
+      <button class="tab-btn" data-tab="comparativos">COMPARATIVOS</button>
+      <button class="tab-btn" data-tab="pacing">PACING</button>
+      <button class="tab-btn" data-tab="alertas">ALERTAS</button>
+      <button class="tab-btn" data-tab="aprender">APRENDER</button>
+      <button class="tab-btn" data-tab="config">⚙︎</button>
+    </nav>
+
+    <!-- ═══ ABA HOJE ═══ -->
+    <section id="tab-hoje" class="tab-panel active">
+      <div class="kpi-grid" id="kpi-grid"></div>
+    </section>
+
+    <!-- ═══ ABA LANÇAR ═══ -->
+    <section id="tab-lancar" class="tab-panel">
+      <div class="form-card glass">
+        <h3>Lançamento do dia</h3>
+        <p class="sub">Registre uma vez por dia (ideal: fim da tarde, com o Gerenciador de Anúncios e o WhatsApp abertos). Se o dia já existir, o lançamento substitui.</p>
+        <div class="form-grid">
+          <div class="campo"><label>Data</label><input type="date" id="f-data"></div>
+          <div class="campo"><label>Gasto em anúncios (R$)</label><input type="number" id="f-gasto" min="0" step="0.01" placeholder="ex.: 450"></div>
+          <div class="campo"><label>Leads (conversas novas)</label><input type="number" id="f-leads" min="0" step="1" placeholder="ex.: 7"></div>
+          <div class="campo"><label>Agendamentos</label><input type="number" id="f-agend" min="0" step="1" placeholder="ex.: 3"></div>
+          <div class="campo"><label>Consultas pagas</label><input type="number" id="f-pagas" min="0" step="1" placeholder="ex.: 1"></div>
+          <div class="campo"><label>Seguidores (opcional)</label><input type="number" id="f-seg" min="0" step="1" placeholder="ex.: 15420"></div>
+        </div>
+        <div class="form-acoes">
+          <button class="btn" id="f-salvar">Salvar lançamento</button>
+        </div>
+        <p class="form-ok" id="f-ok">✓ Lançamento salvo e sincronizado.</p>
+      </div>
+
+      <div class="form-card glass">
+        <h3>Campanhas ativas</h3>
+        <p class="sub">Atualize o acumulado de cada campanha (gasto, leads e consultas pagas atribuídas). O painel calcula CPL e custo por consulta de cada uma.</p>
+        <div class="form-grid">
+          <div class="campo" style="grid-column: 1 / -1;"><label>Nome da campanha</label><input type="text" id="c-nome" placeholder="ex.: Lipedema — WhatsApp Frio"></div>
+          <div class="campo"><label>Gasto acumulado (R$)</label><input type="number" id="c-gasto" min="0" step="0.01"></div>
+          <div class="campo"><label>Leads acumulados</label><input type="number" id="c-leads" min="0" step="1"></div>
+          <div class="campo"><label>Consultas pagas</label><input type="number" id="c-pagas" min="0" step="1"></div>
+        </div>
+        <div class="form-acoes">
+          <button class="btn" id="c-salvar">Salvar campanha</button>
+          <button class="btn suave" id="c-limpar">Limpar formulário</button>
+        </div>
+        <div class="tabela-scroll"><table class="mini" id="c-tabela"></table></div>
+      </div>
+
+      <div class="form-card glass">
+        <h3>Histórico de lançamentos</h3>
+        <p class="sub">Toque em editar para corrigir um dia.</p>
+        <div class="tabela-scroll"><table class="mini" id="h-tabela"></table></div>
+      </div>
+    </section>
+
+    <!-- ═══ ABA TENDÊNCIAS ═══ -->
+    <section id="tab-tendencias" class="tab-panel">
+      <h2 class="section-title">Leads e CPL — últimos 30 lançamentos</h2>
+      <div class="chart-wrap glass">
+        <canvas id="chart-linhas" height="220"></canvas>
+        <div class="chart-legend">
+          <span id="leg-leads"><span style="color:#2b6cb8">●</span> Leads</span>
+          <span id="leg-cpl"><span style="color:#e67700">●</span> CPL (R$)</span>
+        </div>
+      </div>
+      <h2 class="section-title">Gasto por campanha</h2>
+      <div class="chart-wrap glass">
+        <canvas id="chart-barras" height="200"></canvas>
+        <p class="vazio-msg" id="barras-vazio" style="display:none">Cadastre campanhas na aba LANÇAR para ver o comparativo.</p>
+      </div>
+    </section>
+
+    <!-- ═══ ABA COMPARATIVOS ═══ -->
+    <section id="tab-comparativos" class="tab-panel">
+      <h2 class="section-title">Últimos 7 dias vs 7 anteriores</h2>
+      <div class="compare-row" id="compare-semana"></div>
+      <h2 class="section-title">Campanha vs campanha</h2>
+      <div class="glass" style="padding:16px; margin-bottom:12px;">
+        <div class="tabela-scroll"><table class="mini" id="table-campanhas"></table></div>
+      </div>
+      <h2 class="section-title">Campanha vencedora</h2>
+      <div class="compare-row" id="compare-criativo"></div>
+    </section>
+
+    <!-- ═══ ABA PACING ═══ -->
+    <section id="tab-pacing" class="tab-panel">
+      <div class="pacing-bar-wrap glass">
+        <h2 class="section-title" style="margin-top:0" id="pacing-titulo">Meta de consultas pagas</h2>
+        <div class="pacing-meta">
+          <span id="pacing-atual">0 pagas</span>
+          <span id="pacing-meta-txt">Meta: —</span>
+        </div>
+        <div class="pacing-track"><div class="pacing-fill" id="pacing-fill" style="width:0%"></div></div>
+        <div class="pacing-stats" id="pacing-stats"></div>
+      </div>
+      <div class="pacing-bar-wrap glass">
+        <h2 class="section-title" style="margin-top:0">Financeiro do mês</h2>
+        <div class="pacing-stats" id="fin-stats"></div>
+      </div>
+    </section>
+
+    <!-- ═══ ABA ALERTAS ═══ -->
+    <section id="tab-alertas" class="tab-panel">
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">
+        Motor de regras rodando sobre os seus números reais — ação do dia priorizada por impacto.
+      </p>
+      <div id="alertas-list"></div>
+    </section>
+
+    <!-- ═══ ABA APRENDER ═══ -->
+    <section id="tab-aprender" class="tab-panel">
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">
+        Toque em cada métrica para entender o que é, o número bom no nicho e o que fazer quando piora.
+      </p>
+      <div class="aprender-list" id="aprender-list"></div>
+    </section>
+
+    <!-- ═══ ABA CONFIG ═══ -->
+    <section id="tab-config" class="tab-panel">
+      <div class="form-card glass">
+        <h3>Configurações</h3>
+        <p class="sub">Definem as metas usadas em todos os cálculos e alertas.</p>
+        <div class="form-grid">
+          <div class="campo" style="grid-column: 1 / -1;"><label>Nome do cliente / projeto</label><input type="text" id="cfg-cliente"></div>
+          <div class="campo"><label>Ticket da consulta (R$)</label><input type="number" id="cfg-ticket" min="0" step="50"></div>
+          <div class="campo"><label>Meta de consultas pagas / mês</label><input type="number" id="cfg-meta" min="1" step="1"></div>
+          <div class="campo"><label>Meta de CPL (R$)</label><input type="number" id="cfg-cpl" min="0" step="5"></div>
+        </div>
+        <div class="form-acoes">
+          <button class="btn" id="cfg-salvar">Salvar configurações</button>
+        </div>
+        <p class="form-ok" id="cfg-ok">✓ Configurações salvas.</p>
+      </div>
+      <div class="form-card glass">
+        <h3>Backup e dados</h3>
+        <p class="sub">Os dados ficam salvos na nuvem do site (Netlify) e neste navegador. Exporte um backup de vez em quando.</p>
+        <div class="form-acoes">
+          <button class="btn suave" id="bk-exportar">⬇ Exportar backup (JSON)</button>
+          <button class="btn suave" id="bk-importar">⬆ Importar backup</button>
+          <input type="file" id="bk-arquivo" accept="application/json" style="display:none">
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal mentoria -->
+  <div class="modal-overlay" id="modal" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h2 id="modal-titulo"></h2>
+      <div class="bloco"><h4>O que é</h4><p id="modal-oque"></p></div>
+      <div class="bloco"><h4>Número bom (lipedema high ticket)</h4><p id="modal-bom"></p></div>
+      <div class="bloco"><h4>Quando piora, faça</h4><p id="modal-piora"></p></div>
+      <button class="modal-close" id="modal-close">Entendi</button>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    'use strict';
+    const $ = id => document.getElementById(id);
+    const API = '/api/growth';
+    const LOCAL = 'growth_blue_os_dados';
+    const PIN_KEY = 'growth_blue_os_pin';
+
+    /* ═══ ESTADO ═══ */
+    let ESTADO = {
+      config: { cliente: 'Dr. Rafael Erthal — Lipedema', ticket: 2500, meta_mes: 30, meta_cpl: 80 },
+      dias: [],       // { d:'YYYY-MM-DD', gasto, leads, agend, pagas, seguidores }
+      campanhas: [],  // { nome, gasto, leads, pagas }
+      atualizado: null
+    };
+    let apiDisponivel = false;
+
+    /* ═══ CONTEÚDO EDUCATIVO (modo mentoria) ═══ */
+    const APRENDER = {
+      leads: {
+        titulo: 'Leads (conversas WhatsApp)',
+        oque: 'Pessoas que clicaram no anúncio e iniciaram conversa no WhatsApp. É o topo do funil depois do clique.',
+        bom: '8–15 leads/dia com orçamento de R$400–600/dia costuma ser saudável neste nicho.',
+        piora: 'Confira se o anúncio ainda está ativo, se o público não saturou (frequência >2,5) e se o CTA pede conversa.'
+      },
+      cpl: {
+        titulo: 'CPL — Custo por Lead',
+        oque: 'Quanto você paga, em média, por cada conversa iniciada no WhatsApp (gasto ÷ leads).',
+        bom: '≤ R$80 saudável · R$80–110 atenção · >R$110 por 5 dias = trocar criativo.',
+        piora: 'Pause o criativo mais caro, duplique o campeão e mude o gancho dos primeiros 3 segundos.'
+      },
+      conversao: {
+        titulo: 'Conversão lead → agendamento',
+        oque: 'Percentual de leads que viraram consulta agendada. Mede a qualidade da conversa, não do anúncio.',
+        bom: '≥40% forte · <25% = gargalo na CONVERSA (script WhatsApp).',
+        piora: 'Grave 3 áudios modelo, responda em <5 min e use prova social (depoimento + antes/depois).'
+      },
+      custo_consulta: {
+        titulo: 'Custo por consulta paga',
+        oque: 'Gasto do mês ÷ consultas que de fato pagaram no mês. É o número que importa para o caixa.',
+        bom: 'Abaixo de metade do ticket deixa margem confortável para escalar.',
+        piora: 'Se CPL está ok mas custo/consulta alto, o problema é fechamento — não é tráfego.'
+      },
+      pagas_mes: {
+        titulo: 'Consultas pagas no mês',
+        oque: 'Contagem real lançada na aba LANÇAR — a Meta não sabe quem pagou; você sabe.',
+        bom: 'Ritmo ideal ≈ meta ÷ dias úteis do mês, por dia útil.',
+        piora: 'Compare com agendamentos: muitos agendamentos e poucas pagas = comparecimento ou qualificação.'
+      },
+      seguidores: {
+        titulo: 'Seguidores',
+        oque: 'Base do Instagram. Crescer com tráfego pago exige custo/seguidor controlado.',
+        bom: 'Custo/seguidor ≤ R$2,00 quando há campanha de seguidores.',
+        piora: 'Se custo/seguidor subir, reduza público frio e foque em remarketing.'
+      },
+      frequencia: {
+        titulo: 'Frequência',
+        oque: 'Quantas vezes, em média, a mesma pessoa viu seu anúncio (no Gerenciador de Anúncios).',
+        bom: 'Entre 1,5 e 2,2 para prospecção.',
+        piora: '>2,5 = saturação. Troque criativo ou expanda público.'
+      }
+    };
+
+    /* ═══ HELPERS ═══ */
+    const hojeISO = () => {
+      const d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    };
+    const fmtBR = iso => { const p = iso.split('-'); return p[2] + '/' + p[1]; };
+    const fmtMoeda = v => 'R$' + (v||0).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const fmtMoeda2 = v => 'R$' + (v||0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtPct = v => (v*100).toFixed(0) + '%';
+    const soma = (arr, k) => arr.reduce((a,x)=>a+(Number(x[k])||0),0);
+    const num = v => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+
+    function diasOrdenados(){ return ESTADO.dias.slice().sort((a,b)=>a.d.localeCompare(b.d)); }
+    function diasDoMes(iso){ const mes = iso.slice(0,7); return ESTADO.dias.filter(x=>x.d.slice(0,7)===mes); }
+    function diasUteisRestantes(){
+      const agora = new Date();
+      const fim = new Date(agora.getFullYear(), agora.getMonth()+1, 0);
+      let n = 0;
+      for(let d = new Date(agora); d <= fim; d.setDate(d.getDate()+1)){
+        const wd = d.getDay();
+        if(wd!==0 && wd!==6) n++;
+      }
+      return n;
+    }
+
+    /* ═══ ARMAZENAMENTO: local + nuvem ═══ */
+    function salvaLocal(){ localStorage.setItem(LOCAL, JSON.stringify(ESTADO)); }
+    function pinAtual(){ return localStorage.getItem(PIN_KEY) || ''; }
+
+    function setSync(cls, txt){
+      const chip = $('sync-chip');
+      chip.className = 'sync-chip ' + cls;
+      chip.textContent = txt;
+    }
+
+    async function chamaAPI(metodo, corpo){
+      const headers = { 'Content-Type': 'application/json' };
+      const pin = pinAtual();
+      if(pin) headers['x-growth-pin'] = pin;
+      const r = await fetch(API, { method: metodo, headers, body: corpo ? JSON.stringify(corpo) : undefined });
+      if(r.status===401){
+        const novo = prompt('Este painel está protegido por PIN.\nDigite o PIN de acesso:');
+        if(novo!==null && novo.trim()){
+          localStorage.setItem(PIN_KEY, novo.trim());
+          return chamaAPI(metodo, corpo);
+        }
+        throw new Error('PIN necessário');
+      }
+      if(!r.ok) throw new Error('API ' + r.status);
+      return r.json();
+    }
+
+    async function sincroniza(){
+      salvaLocal();
+      if(!apiDisponivel){ setSync('erro','só neste aparelho'); return; }
+      try{
+        setSync('','sincronizando…');
+        await chamaAPI('PUT', ESTADO);
+        setSync('ok','☁ sincronizado');
+      }catch(e){
+        setSync('erro','⚠ offline — salvo local');
+      }
+    }
+
+    async function carrega(){
+      try{ const local = JSON.parse(localStorage.getItem(LOCAL)||'null'); if(local) ESTADO = Object.assign(ESTADO, local); }catch(e){}
+      try{
+        const nuvem = await chamaAPI('GET');
+        apiDisponivel = true;
+        const tNuvem = nuvem.atualizado || '';
+        const tLocal = ESTADO.atualizado || '';
+        if(nuvem.dias && (nuvem.dias.length || nuvem.campanhas.length) && tNuvem >= tLocal){
+          ESTADO = Object.assign(ESTADO, nuvem);
+          salvaLocal();
+          setSync('ok','☁ sincronizado');
+        } else if(ESTADO.dias.length || ESTADO.campanhas.length){
+          // local mais novo (ou nuvem vazia): sobe o local
+          await sincroniza();
+        } else {
+          setSync('ok','☁ conectado');
+        }
+      }catch(e){
+        apiDisponivel = false;
+        setSync('erro','só neste aparelho');
+      }
+      renderTudo();
+    }
+
+    function marcaAlteracao(){
+      ESTADO.atualizado = new Date().toISOString();
+      sincroniza();
+      renderTudo();
+    }
+
+    /* ═══ MÉTRICAS ═══ */
+    function metricasDe(dias){
+      const gasto = soma(dias,'gasto'), leads = soma(dias,'leads'), agend = soma(dias,'agend'), pagas = soma(dias,'pagas');
+      return {
+        gasto, leads, agend, pagas,
+        cpl: leads>0 ? gasto/leads : 0,
+        conversao: leads>0 ? agend/leads : 0,
+        custo_consulta: pagas>0 ? gasto/pagas : 0
+      };
+    }
+
+    /* ═══ RENDER ═══ */
+    function renderTudo(){
+      renderHero();
+      renderBanner();
+      renderKPIs();
+      renderHistorico();
+      renderCampanhasTabela();
+      renderComparativos();
+      renderPacing();
+      renderAlertas();
+      renderConfig();
+      if($('tab-tendencias').classList.contains('active')){ desenharLinhas(); desenharBarras(); }
+    }
+
+    function renderHero(){
+      $('hero-nome').textContent = ESTADO.config.cliente || 'Growth Blue OS';
+      $('hero-sub').textContent = 'Consulta ' + fmtMoeda(ESTADO.config.ticket) + ' · Meta ' + ESTADO.config.meta_mes + '/mês · CPL alvo ' + fmtMoeda(ESTADO.config.meta_cpl);
+    }
+
+    function renderBanner(){
+      $('banner-vazio').style.display = ESTADO.dias.length ? 'none' : 'block';
+    }
+
+    function renderKPIs(){
+      const grid = $('kpi-grid');
+      grid.innerHTML = '';
+      const ord = diasOrdenados();
+      if(!ord.length){
+        grid.innerHTML = '<div class="glass" style="grid-column:1/-1;padding:24px;text-align:center;font-size:13px;color:var(--text-muted)">Sem lançamentos ainda. Vá em <b>＋ LANÇAR</b> e registre o primeiro dia — leva 1 minuto.</div>';
+        return;
+      }
+      const ult = ord[ord.length-1];
+      const ant = ord.length>1 ? ord[ord.length-2] : null;
+      const mes = metricasDe(diasDoMes(ult.d));
+
+      const cplUlt = ult.leads>0 ? ult.gasto/ult.leads : 0;
+      const cplAnt = ant && ant.leads>0 ? ant.gasto/ant.leads : null;
+      const convUlt = ult.leads>0 ? ult.agend/ult.leads : 0;
+      const convAnt = ant && ant.leads>0 ? ant.agend/ant.leads : null;
+
+      const kpis = [
+        { label:'Leads ('+fmtBR(ult.d)+')', val: ult.leads, ant: ant?ant.leads:null, fmt:v=>v, ajuda:'leads' },
+        { label:'CPL ('+fmtBR(ult.d)+')', val: cplUlt, ant: cplAnt, fmt:fmtMoeda2, invert:true, ajuda:'cpl' },
+        { label:'Conversão', val: convUlt, ant: convAnt, fmt:fmtPct, ajuda:'conversao' },
+        { label:'Custo/consulta (mês)', val: mes.custo_consulta, ant:null, fmt:fmtMoeda, invert:true, ajuda:'custo_consulta' },
+        { label:'Pagas no mês', val: mes.pagas, ant:null, fmt:v=>v, ajuda:'pagas_mes' },
+        { label:'Seguidores', val: ult.seguidores||0, ant: ant?(ant.seguidores||null):null, fmt:v=>v?v.toLocaleString('pt-BR'):'—', ajuda:'seguidores' }
+      ];
+
+      kpis.forEach(k=>{
+        let deltaHTML = '<div class="kpi-delta" style="color:var(--text-muted)">—</div>';
+        if(k.ant!==null && k.ant!==undefined && k.ant!==0){
+          const diff = k.val - k.ant;
+          const pct = Math.abs((diff/k.ant)*100).toFixed(0);
+          const positivo = k.invert ? diff<0 : diff>0;
+          const seta = diff>0?'↑':diff<0?'↓':'→';
+          const cls = diff===0?'':(positivo?'up':'down');
+          deltaHTML = '<div class="kpi-delta '+cls+'">'+seta+' '+pct+'% vs lançamento anterior</div>';
+        }
+        const card = document.createElement('div');
+        card.className = 'kpi-card glass';
+        card.innerHTML =
+          '<div class="kpi-label">'+k.label+
+          ' <button class="btn-help" data-ajuda="'+k.ajuda+'" aria-label="Aprender sobre '+k.label+'">?</button></div>'+
+          '<div class="kpi-value">'+k.fmt(k.val)+'</div>'+deltaHTML;
+        grid.appendChild(card);
+      });
+    }
+
+    /* ── LANÇAR: dia ── */
+    $('f-data').value = hojeISO();
+    $('f-salvar').addEventListener('click', ()=>{
+      const d = $('f-data').value;
+      if(!d){ alert('Escolha a data.'); return; }
+      const reg = {
+        d,
+        gasto: num($('f-gasto').value),
+        leads: Math.round(num($('f-leads').value)),
+        agend: Math.round(num($('f-agend').value)),
+        pagas: Math.round(num($('f-pagas').value)),
+        seguidores: Math.round(num($('f-seg').value)) || 0
+      };
+      const ix = ESTADO.dias.findIndex(x=>x.d===d);
+      if(ix>=0) ESTADO.dias[ix] = reg; else ESTADO.dias.push(reg);
+      marcaAlteracao();
+      const ok = $('f-ok');
+      ok.classList.add('on');
+      setTimeout(()=>ok.classList.remove('on'), 2500);
+      ['f-gasto','f-leads','f-agend','f-pagas','f-seg'].forEach(id=>$(id).value='');
+      $('f-data').value = hojeISO();
+    });
+
+    function renderHistorico(){
+      const t = $('h-tabela');
+      const ord = diasOrdenados().slice().reverse().slice(0,30);
+      if(!ord.length){ t.innerHTML = '<tr><td class="vazio-msg">Nenhum lançamento ainda.</td></tr>'; return; }
+      let html = '<tr><th>Data</th><th>Gasto</th><th>Leads</th><th>Agend.</th><th>Pagas</th><th>CPL</th><th></th></tr>';
+      ord.forEach(x=>{
+        const cpl = x.leads>0 ? (x.gasto/x.leads) : 0;
+        html += '<tr><td>'+fmtBR(x.d)+'</td><td>'+fmtMoeda(x.gasto)+'</td><td>'+x.leads+'</td><td>'+x.agend+'</td><td>'+x.pagas+'</td><td>'+(cpl?fmtMoeda2(cpl):'—')+'</td>'+
+          '<td><button class="acao-linha" data-editar="'+x.d+'">editar</button>'+
+          '<button class="acao-linha del" data-apagar="'+x.d+'">apagar</button></td></tr>';
+      });
+      t.innerHTML = html;
+    }
+    $('h-tabela').addEventListener('click', e=>{
+      const ed = e.target.dataset.editar, ap = e.target.dataset.apagar;
+      if(ed){
+        const x = ESTADO.dias.find(r=>r.d===ed);
+        if(!x) return;
+        $('f-data').value = x.d;
+        $('f-gasto').value = x.gasto;
+        $('f-leads').value = x.leads;
+        $('f-agend').value = x.agend;
+        $('f-pagas').value = x.pagas;
+        $('f-seg').value = x.seguidores||'';
+        window.scrollTo({top:0, behavior:'smooth'});
+      }
+      if(ap && confirm('Apagar o lançamento de '+fmtBR(ap)+'?')){
+        ESTADO.dias = ESTADO.dias.filter(r=>r.d!==ap);
+        marcaAlteracao();
+      }
+    });
+
+    /* ── LANÇAR: campanhas ── */
+    $('c-salvar').addEventListener('click', ()=>{
+      const nome = $('c-nome').value.trim();
+      if(!nome){ alert('Dê um nome à campanha.'); return; }
+      const reg = { nome, gasto: num($('c-gasto').value), leads: Math.round(num($('c-leads').value)), pagas: Math.round(num($('c-pagas').value)) };
+      const ix = ESTADO.campanhas.findIndex(c=>c.nome.toLowerCase()===nome.toLowerCase());
+      if(ix>=0) ESTADO.campanhas[ix] = reg; else ESTADO.campanhas.push(reg);
+      marcaAlteracao();
+      $('c-nome').value=''; $('c-gasto').value=''; $('c-leads').value=''; $('c-pagas').value='';
+    });
+    $('c-limpar').addEventListener('click', ()=>{
+      $('c-nome').value=''; $('c-gasto').value=''; $('c-leads').value=''; $('c-pagas').value='';
+    });
+
+    function renderCampanhasTabela(){
+      const t = $('c-tabela');
+      if(!ESTADO.campanhas.length){ t.innerHTML = '<tr><td class="vazio-msg">Nenhuma campanha cadastrada.</td></tr>'; return; }
+      let html = '<tr><th>Campanha</th><th>Gasto</th><th>Leads</th><th>Pagas</th><th></th></tr>';
+      ESTADO.campanhas.forEach(c=>{
+        html += '<tr><td>'+c.nome+'</td><td>'+fmtMoeda(c.gasto)+'</td><td>'+c.leads+'</td><td>'+c.pagas+'</td>'+
+          '<td><button class="acao-linha" data-ceditar="'+c.nome+'">editar</button>'+
+          '<button class="acao-linha del" data-capagar="'+c.nome+'">apagar</button></td></tr>';
+      });
+      t.innerHTML = html;
+    }
+    $('c-tabela').addEventListener('click', e=>{
+      const ed = e.target.dataset.ceditar, ap = e.target.dataset.capagar;
+      if(ed){
+        const c = ESTADO.campanhas.find(x=>x.nome===ed);
+        if(!c) return;
+        $('c-nome').value = c.nome; $('c-gasto').value = c.gasto; $('c-leads').value = c.leads; $('c-pagas').value = c.pagas;
+      }
+      if(ap && confirm('Apagar a campanha "'+ap+'"?')){
+        ESTADO.campanhas = ESTADO.campanhas.filter(x=>x.nome!==ap);
+        marcaAlteracao();
+      }
+    });
+
+    /* ── COMPARATIVOS ── */
+    function renderComparativos(){
+      const ord = diasOrdenados();
+      const at = metricasDe(ord.slice(-7));
+      const an = metricasDe(ord.slice(-14,-7));
+      $('compare-semana').innerHTML =
+        '<div class="compare-box glass"><div class="val">'+at.leads+'</div><div class="lbl">Leads · últimos 7 dias</div></div>'+
+        '<div class="compare-box glass"><div class="val">'+an.leads+'</div><div class="lbl">Leads · 7 anteriores</div></div>'+
+        '<div class="compare-box glass"><div class="val">'+(at.cpl?fmtMoeda(at.cpl):'—')+'</div><div class="lbl">CPL · últimos 7 dias</div></div>'+
+        '<div class="compare-box glass"><div class="val">'+(an.cpl?fmtMoeda(an.cpl):'—')+'</div><div class="lbl">CPL · 7 anteriores</div></div>'+
+        '<div class="compare-box glass"><div class="val">'+at.pagas+'</div><div class="lbl">Pagas · últimos 7 dias</div></div>'+
+        '<div class="compare-box glass"><div class="val">'+an.pagas+'</div><div class="lbl">Pagas · 7 anteriores</div></div>';
+
+      const t = $('table-campanhas');
+      if(!ESTADO.campanhas.length){
+        t.innerHTML = '<tr><td class="vazio-msg">Cadastre campanhas na aba LANÇAR.</td></tr>';
+      } else {
+        let html = '<tr><th>Campanha</th><th>Gasto</th><th>Leads</th><th>CPL</th><th>Pagas</th><th>Custo/paga</th></tr>';
+        ESTADO.campanhas.forEach(c=>{
+          const cpl = c.leads>0 ? c.gasto/c.leads : 0;
+          const cpp = c.pagas>0 ? c.gasto/c.pagas : 0;
+          html += '<tr><td>'+c.nome+'</td><td>'+fmtMoeda(c.gasto)+'</td><td>'+c.leads+'</td><td>'+(cpl?fmtMoeda2(cpl):'—')+'</td><td>'+c.pagas+'</td><td>'+(cpp?fmtMoeda(cpp):'—')+'</td></tr>';
+        });
+        t.innerHTML = html;
+      }
+
+      const box = $('compare-criativo');
+      const comLeads = ESTADO.campanhas.filter(c=>c.leads>0);
+      const comPagas = ESTADO.campanhas.filter(c=>c.pagas>0);
+      if(!comLeads.length){
+        box.innerHTML = '<div class="compare-box glass" style="grid-column:1/-1"><div class="lbl">Cadastre campanhas com leads para descobrir a vencedora.</div></div>';
+      } else {
+        const melhorCPL = comLeads.reduce((a,b)=> (a.gasto/a.leads) <= (b.gasto/b.leads) ? a : b);
+        let html = '<div class="compare-box glass"><div class="val">'+fmtMoeda(melhorCPL.gasto/melhorCPL.leads)+'</div><div class="lbl">Melhor CPL: '+melhorCPL.nome+'</div></div>';
+        if(comPagas.length){
+          const melhorCusto = comPagas.reduce((a,b)=> (a.gasto/a.pagas) <= (b.gasto/b.pagas) ? a : b);
+          html += '<div class="compare-box glass"><div class="val">'+fmtMoeda(melhorCusto.gasto/melhorCusto.pagas)+'</div><div class="lbl">Melhor custo/consulta: '+melhorCusto.nome+'</div></div>';
+        }
+        box.innerHTML = html;
+      }
+    }
+
+    /* ── PACING ── */
+    function renderPacing(){
+      const cfg = ESTADO.config;
+      const agora = new Date();
+      const diaMes = agora.getDate();
+      const diasNoMes = new Date(agora.getFullYear(), agora.getMonth()+1, 0).getDate();
+      const mes = metricasDe(diasDoMes(hojeISO()));
+      const projecao = diaMes>0 ? Math.round((mes.pagas/diaMes)*diasNoMes) : 0;
+      const uteis = diasUteisRestantes();
+      const gap = uteis>0 ? Math.max(0,(cfg.meta_mes - mes.pagas))/uteis : 0;
+
+      $('pacing-titulo').textContent = 'Meta: ' + cfg.meta_mes + ' consultas pagas no mês';
+      $('pacing-atual').textContent = mes.pagas + ' pagas';
+      $('pacing-meta-txt').textContent = 'Meta: ' + cfg.meta_mes;
+      $('pacing-fill').style.width = Math.min(100,(mes.pagas/Math.max(1,cfg.meta_mes))*100) + '%';
+      $('pacing-stats').innerHTML =
+        '<div class="pacing-stat"><div class="n">'+projecao+'</div><div class="l">Projeção linear do mês</div></div>'+
+        '<div class="pacing-stat"><div class="n">'+gap.toFixed(2)+'</div><div class="l">Pagas necessárias/dia útil</div></div>'+
+        '<div class="pacing-stat"><div class="n">'+uteis+'</div><div class="l">Dias úteis restantes</div></div>'+
+        '<div class="pacing-stat"><div class="n">Dia '+diaMes+'</div><div class="l">de '+diasNoMes+' no mês</div></div>';
+
+      const receita = mes.pagas * cfg.ticket;
+      const roi = mes.gasto>0 ? receita/mes.gasto : 0;
+      $('fin-stats').innerHTML =
+        '<div class="pacing-stat"><div class="n">'+fmtMoeda(mes.gasto)+'</div><div class="l">Investido no mês</div></div>'+
+        '<div class="pacing-stat"><div class="n">'+fmtMoeda(receita)+'</div><div class="l">Receita em consultas</div></div>'+
+        '<div class="pacing-stat"><div class="n">'+(roi?roi.toFixed(1)+'×':'—')+'</div><div class="l">Retorno sobre o gasto</div></div>'+
+        '<div class="pacing-stat"><div class="n">'+(mes.custo_consulta?fmtMoeda(mes.custo_consulta):'—')+'</div><div class="l">Custo por consulta paga</div></div>';
+    }
+
+    /* ── MOTOR DE ALERTAS ── */
+    function renderAlertas(){
+      const lista = $('alertas-list');
+      lista.innerHTML = '';
+      const alertas = [];
+      const cfg = ESTADO.config;
+      const ord = diasOrdenados();
+
+      if(!ord.length){
+        alertas.push({ nivel:'atencao', titulo:'Comece a metrificar', texto:'Nenhum lançamento registrado ainda. Sem dado, não há decisão — só achismo.', acao:'Abra a aba ＋ LANÇAR e registre gasto, leads, agendamentos e pagas de hoje. 1 minuto por dia.' });
+      } else {
+        const ultimo = ord[ord.length-1];
+        const diasSem = Math.floor((new Date(hojeISO()) - new Date(ultimo.d)) / 86400000);
+        if(diasSem>=2){
+          alertas.push({ nivel:'critico', titulo:diasSem+' dias sem lançamento', texto:'Último registro: '+fmtBR(ultimo.d)+'. O painel só enxerga o que você lança.', acao:'Lance os dias que faltam agora — o Gerenciador de Anúncios mostra o gasto retroativo por dia.' });
+        } else if(diasSem===1 && new Date().getHours()>=17){
+          alertas.push({ nivel:'atencao', titulo:'Hoje ainda sem lançamento', texto:'Fim do dia chegando e o dia de hoje não foi registrado.', acao:'Registre agora na aba ＋ LANÇAR (leva 1 minuto).' });
+        }
+
+        const seteDias = metricasDe(ord.slice(-7));
+        if(seteDias.leads>0){
+          if(seteDias.cpl > cfg.meta_cpl*1.4){
+            alertas.push({ nivel:'critico', titulo:'CPL muito acima da meta', texto:'CPL médio dos últimos 7 dias: '+fmtMoeda2(seteDias.cpl)+' (meta: '+fmtMoeda(cfg.meta_cpl)+').', acao:'Pause o criativo mais caro hoje, duplique o campeão e teste um gancho novo nos 3 primeiros segundos.' });
+          } else if(seteDias.cpl > cfg.meta_cpl){
+            alertas.push({ nivel:'atencao', titulo:'CPL acima da meta', texto:'CPL médio dos últimos 7 dias: '+fmtMoeda2(seteDias.cpl)+' (meta: '+fmtMoeda(cfg.meta_cpl)+').', acao:'Observe por mais 2 dias. Se passar de '+fmtMoeda(cfg.meta_cpl*1.4)+', troque o criativo.' });
+          } else {
+            alertas.push({ nivel:'ok', titulo:'CPL saudável', texto:'CPL médio dos últimos 7 dias: '+fmtMoeda2(seteDias.cpl)+' — dentro da meta de '+fmtMoeda(cfg.meta_cpl)+'.', acao:'Manter campanha principal e testar 1 variação de hook no criativo campeão.' });
+          }
+
+          const conv = seteDias.conversao;
+          if(conv < 0.15){
+            alertas.push({ nivel:'critico', titulo:'Conversão lead → agendamento crítica', texto:'Apenas '+fmtPct(conv)+' dos leads dos últimos 7 dias viraram agendamento (forte: ≥40%). O gargalo é a CONVERSA, não o anúncio.', acao:'Hoje: revisar o tempo de resposta (meta <5 min) e as 3 primeiras mensagens do atendimento. Use a Central da Comercial.' });
+          } else if(conv < 0.25){
+            alertas.push({ nivel:'atencao', titulo:'Conversão abaixo do ideal', texto:fmtPct(conv)+' dos leads viraram agendamento nos últimos 7 dias (forte: ≥40%).', acao:'Reforce prova social (antes/depois) e feche cada mensagem com UMA pergunta.' });
+          }
+        }
+
+        const mes = metricasDe(diasDoMes(hojeISO()));
+        const agora = new Date();
+        const diaMes = agora.getDate();
+        const diasNoMes = new Date(agora.getFullYear(), agora.getMonth()+1, 0).getDate();
+        const projecao = diaMes>0 ? Math.round((mes.pagas/diaMes)*diasNoMes) : 0;
+        if(diaMes>=5 && projecao < cfg.meta_mes){
+          const uteis = diasUteisRestantes();
+          const gap = uteis>0 ? ((cfg.meta_mes-mes.pagas)/uteis).toFixed(1) : '—';
+          alertas.push({ nivel: projecao < cfg.meta_mes*0.6 ? 'critico':'atencao', titulo:'Pacing abaixo da meta', texto:mes.pagas+' de '+cfg.meta_mes+' consultas pagas no dia '+diaMes+' — projeção linear fecha em ~'+projecao+'.', acao:'Necessário fechar '+gap+' consulta(s) por dia útil. Prioridade: follow-up de leads quentes e taxa de agendamento no WhatsApp.' });
+        } else if(diaMes>=5 && mes.pagas>0){
+          alertas.push({ nivel:'ok', titulo:'Pacing no ritmo', texto:mes.pagas+' pagas até o dia '+diaMes+' — projeção de ~'+projecao+' contra meta de '+cfg.meta_mes+'.', acao:'Ritmo bom. Avalie escalar +20% de orçamento no criativo campeão.' });
+        }
+
+        if(mes.pagas>0 && mes.custo_consulta > cfg.ticket*0.5){
+          alertas.push({ nivel:'critico', titulo:'Margem apertada', texto:'Custo por consulta paga no mês: '+fmtMoeda(mes.custo_consulta)+' — mais da metade do ticket de '+fmtMoeda(cfg.ticket)+'.', acao:'Se o CPL está ok, o problema é fechamento: audite as conversas que não viraram Pix esta semana.' });
+        }
+
+        const comLeads = ESTADO.campanhas.filter(c=>c.leads>0);
+        if(comLeads.length>=2){
+          const melhor = comLeads.reduce((a,b)=> (a.gasto/a.leads)<=(b.gasto/b.leads)?a:b);
+          const pior = comLeads.reduce((a,b)=> (a.gasto/a.leads)>=(b.gasto/b.leads)?a:b);
+          const cplM = melhor.gasto/melhor.leads, cplP = pior.gasto/pior.leads;
+          if(melhor!==pior && cplP > cplM*1.6){
+            alertas.push({ nivel:'atencao', titulo:'Verba mal distribuída entre campanhas', texto:'"'+pior.nome+'" está com CPL '+fmtMoeda2(cplP)+' contra '+fmtMoeda2(cplM)+' de "'+melhor.nome+'".', acao:'Realoque 30–50% da verba da campanha cara para a campeã e monitore por 3 dias.' });
+          }
+        }
+      }
+
+      const peso = { critico: 0, atencao: 1, ok: 2 };
+      alertas.sort((a,b)=>peso[a.nivel]-peso[b.nivel]);
+      alertas.forEach(a=>{
+        const div = document.createElement('div');
+        div.className = 'alerta-card glass ' + (a.nivel==='atencao'?'atencao':a.nivel==='critico'?'critico':'');
+        div.innerHTML = '<h3>'+a.titulo+'</h3><p>'+a.texto+'</p><div class="alerta-acao">🎯 Ação: '+a.acao+'</div>';
+        lista.appendChild(div);
+      });
+    }
+
+    /* ── GRÁFICOS (canvas puro) ── */
+    function desenharLinhas(){
+      const canvas = $('chart-linhas');
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const W = canvas.parentElement.clientWidth - 32;
+      const H = 220;
+      canvas.width = W*dpr; canvas.height = H*dpr;
+      canvas.style.width = W+'px'; canvas.style.height = H+'px';
+      ctx.scale(dpr,dpr);
+      ctx.clearRect(0,0,W,H);
+
+      const dados = diasOrdenados().slice(-30).map(x=>({ d:fmtBR(x.d), leads:x.leads, cpl: x.leads>0? x.gasto/x.leads : 0 }));
+      if(dados.length<2){
+        ctx.fillStyle = '#5a7a9a'; ctx.font = '12px Montserrat'; ctx.textAlign='center';
+        ctx.fillText(dados.length===0 ? 'Sem lançamentos ainda — registre na aba LANÇAR.' : 'Registre mais um dia para ver a tendência.', W/2, H/2);
+        return;
+      }
+      const pad = { t:20, r:50, b:36, l:40 };
+      const plotW = W-pad.l-pad.r, plotH = H-pad.t-pad.b;
+      const maxLeads = Math.max(1, ...dados.map(d=>d.leads))*1.15;
+      const maxCpl = Math.max(1, ...dados.map(d=>d.cpl))*1.15;
+
+      ctx.strokeStyle = 'rgba(43,108,184,0.1)'; ctx.lineWidth = 1;
+      for(let i=0;i<=4;i++){
+        const y = pad.t + (plotH/4)*i;
+        ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke();
+      }
+      const xPos = i => pad.l + (plotW/(dados.length-1))*i;
+      const yLeads = v => pad.t + plotH - (v/maxLeads)*plotH;
+      const yCpl = v => pad.t + plotH - (v/maxCpl)*plotH;
+
+      ctx.strokeStyle = '#2b6cb8'; ctx.lineWidth = 2.5; ctx.beginPath();
+      dados.forEach((d,i)=>{ i?ctx.lineTo(xPos(i),yLeads(d.leads)):ctx.moveTo(xPos(i),yLeads(d.leads)); });
+      ctx.stroke();
+      dados.forEach((d,i)=>{ ctx.fillStyle='#2b6cb8'; ctx.beginPath(); ctx.arc(xPos(i),yLeads(d.leads),3.5,0,Math.PI*2); ctx.fill(); });
+
+      ctx.strokeStyle = '#e67700'; ctx.lineWidth = 2; ctx.setLineDash([5,4]); ctx.beginPath();
+      dados.forEach((d,i)=>{ i?ctx.lineTo(xPos(i),yCpl(d.cpl)):ctx.moveTo(xPos(i),yCpl(d.cpl)); });
+      ctx.stroke(); ctx.setLineDash([]);
+
+      ctx.fillStyle = '#5a7a9a'; ctx.font = '10px Montserrat'; ctx.textAlign = 'center';
+      [0, Math.floor(dados.length/2), dados.length-1].forEach(i=>{ ctx.fillText(dados[i].d, xPos(i), H-10); });
+      ctx.textAlign='right'; ctx.fillStyle='#2b6cb8'; ctx.fillText(maxLeads.toFixed(0), pad.l-6, pad.t+4);
+      ctx.textAlign='left'; ctx.fillStyle='#e67700'; ctx.fillText('R$'+maxCpl.toFixed(0), W-pad.r+6, pad.t+4);
+    }
+
+    function desenharBarras(){
+      const canvas = $('chart-barras');
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const W = canvas.parentElement.clientWidth - 32;
+      const H = 200;
+      canvas.width = W*dpr; canvas.height = H*dpr;
+      canvas.style.width = W+'px'; canvas.style.height = H+'px';
+      ctx.scale(dpr,dpr);
+      ctx.clearRect(0,0,W,H);
+
+      const camps = ESTADO.campanhas;
+      $('barras-vazio').style.display = camps.length ? 'none' : 'block';
+      canvas.style.display = camps.length ? 'block' : 'none';
+      if(!camps.length) return;
+
+      const maxG = Math.max(1, ...camps.map(c=>c.gasto))*1.1;
+      const pad = { t:16, r:16, b:56, l:16 };
+      const gap = (W-pad.l-pad.r)/camps.length;
+      const barW = gap*0.55;
+      const plotH = H-pad.t-pad.b;
+
+      camps.forEach((c,i)=>{
+        const x = pad.l + gap*i + (gap-barW)/2;
+        const h = (c.gasto/maxG)*plotH;
+        const y = pad.t + plotH - h;
+        const grad = ctx.createLinearGradient(0,y,0,y+h);
+        grad.addColorStop(0,'#4a90d9'); grad.addColorStop(1,'#1c4e8a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(x,y,barW,h);
+        ctx.fillStyle = '#1a365d'; ctx.font = '9px Montserrat'; ctx.textAlign='center';
+        ctx.fillText('R$'+Math.round(c.gasto), x+barW/2, y-6);
+        ctx.fillStyle = '#5a7a9a';
+        ctx.fillText(c.nome.slice(0,16), x+barW/2, H-pad.b+14);
+      });
+    }
+
+    /* ── CONFIG ── */
+    function renderConfig(){
+      $('cfg-cliente').value = ESTADO.config.cliente;
+      $('cfg-ticket').value = ESTADO.config.ticket;
+      $('cfg-meta').value = ESTADO.config.meta_mes;
+      $('cfg-cpl').value = ESTADO.config.meta_cpl;
+    }
+    $('cfg-salvar').addEventListener('click', ()=>{
+      ESTADO.config = {
+        cliente: $('cfg-cliente').value.trim() || 'Growth Blue OS',
+        ticket: num($('cfg-ticket').value) || 2500,
+        meta_mes: Math.round(num($('cfg-meta').value)) || 30,
+        meta_cpl: num($('cfg-cpl').value) || 80
+      };
+      marcaAlteracao();
+      const ok = $('cfg-ok');
+      ok.classList.add('on');
+      setTimeout(()=>ok.classList.remove('on'), 2500);
+    });
+
+    /* ── Backup ── */
+    $('bk-exportar').addEventListener('click', ()=>{
+      const blob = new Blob([JSON.stringify(ESTADO, null, 2)], { type:'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'growth-blue-os-backup-' + hojeISO() + '.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+    $('bk-importar').addEventListener('click', ()=>$('bk-arquivo').click());
+    $('bk-arquivo').addEventListener('change', e=>{
+      const arq = e.target.files[0];
+      if(!arq) return;
+      const leitor = new FileReader();
+      leitor.onload = ()=>{
+        try{
+          const dados = JSON.parse(leitor.result);
+          if(!Array.isArray(dados.dias)) throw new Error('estrutura');
+          if(!confirm('Substituir os dados atuais pelos do backup ('+dados.dias.length+' lançamentos)?')) return;
+          ESTADO = Object.assign(ESTADO, dados);
+          marcaAlteracao();
+        }catch(err){ alert('Arquivo de backup inválido.'); }
+      };
+      leitor.readAsText(arq);
+      e.target.value = '';
+    });
+
+    /* ── Abas ── */
+    document.querySelectorAll('.tab-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+        btn.classList.add('active');
+        $('tab-'+btn.dataset.tab).classList.add('active');
+        if(btn.dataset.tab==='tendencias'){ desenharLinhas(); desenharBarras(); }
+      });
+    });
+    $('banner-vazio').addEventListener('click', ()=>{
+      document.querySelector('[data-tab="lancar"]').click();
+    });
+
+    /* ── Aprender + modal ── */
+    const lista = $('aprender-list');
+    Object.entries(APRENDER).forEach(([key,item])=>{
+      const el = document.createElement('div');
+      el.className = 'aprender-item glass';
+      el.innerHTML = '<div><h3>'+item.titulo+'</h3><p>Toque no ? para o modo mentoria</p></div>'+
+        '<button class="btn-help" data-ajuda="'+key+'">?</button>';
+      lista.appendChild(el);
+    });
+    const modal = $('modal');
+    function abrirAjuda(key){
+      const item = APRENDER[key];
+      if(!item) return;
+      $('modal-titulo').textContent = item.titulo;
+      $('modal-oque').textContent = item.oque;
+      $('modal-bom').textContent = item.bom;
+      $('modal-piora').textContent = item.piora;
+      modal.classList.add('open');
+    }
+    document.body.addEventListener('click', e=>{
+      const btn = e.target.closest('[data-ajuda]');
+      if(btn) abrirAjuda(btn.dataset.ajuda);
+    });
+    $('modal-close').onclick = ()=>modal.classList.remove('open');
+    modal.onclick = e=>{ if(e.target===modal) modal.classList.remove('open'); };
+
+    window.addEventListener('resize', ()=>{
+      if($('tab-tendencias').classList.contains('active')){ desenharLinhas(); desenharBarras(); }
+    });
+
+    /* ── Início ── */
+    carrega();
+  })();
+  </script>
+</body>
+</html>
