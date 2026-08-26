@@ -770,7 +770,8 @@
 
   const CONV_PROMPT = [
     'Continue esta conversa de WhatsApp da Maria (comercial 1, Clínica Blue) com uma lead. A conversa nunca acaba; cada bloco é uma nova situação coerente com o que já aconteceu.',
-    'JSON: objeto com {lead, ops:[3 strings], certa:0|1|2, fb}',
+    'Gere 3 situações seguidas de uma vez só.',
+    'JSON: array de 3 objetos, cada um com {lead, ops:[3 strings], certa:0|1|2, fb}',
     '- lead: a próxima mensagem da lead, curta, em tom de WhatsApp',
     '- ops: três respostas que a Maria poderia mandar AGORA',
     '- certa: índice da opção de elite (acolhimento, valor antes de preço, 1 pergunta, cidade=protocolo, nunca promete diagnóstico/resultado/plano)',
@@ -789,15 +790,19 @@
         CONV_PROMPT.replace('{NIVEL}', CONV_NIVEIS[convNivelAtual()]) + '\n\nHistórico da conversa (últimas trocas):\n' + JSON.stringify(historico.map(h=>h.texto)),
         [],
         extra,
-        { temperature: 0.85, maxOutputTokens: 1200 }
+        { temperature: 0.85, maxOutputTokens: 1800 }
       );
-      if(!dados || !dados.lead || !Array.isArray(dados.ops) || dados.ops.length<3) return null;
-      return {
-        lead: String(dados.lead).trim(),
-        ops: dados.ops.slice(0,3).map(o=>String(o).trim()),
-        certa: Math.max(0, Math.min(2, Number(dados.certa)||0)),
-        fb: String(dados.fb||'').trim()
-      };
+      const lista = Array.isArray(dados) ? dados : (dados.situacoes || dados.perguntas || [dados]);
+      const validas = lista.map(s=>{
+        if(!s || !s.lead || !Array.isArray(s.ops) || s.ops.length<3) return null;
+        return {
+          lead: String(s.lead).trim(),
+          ops: s.ops.slice(0,3).map(o=>String(o).trim()),
+          certa: Math.max(0, Math.min(2, Number(s.certa)||0)),
+          fb: String(s.fb||'').trim()
+        };
+      }).filter(Boolean);
+      return validas.length ? validas : null;
     }catch(e){
       return null;
     }finally{
@@ -834,10 +839,9 @@
         $('convFeedback').innerHTML='<b>Gerando a próxima situação…</b>';
         return;
       }
-      gerarProximaConv().then(nova=>{
-        if(nova){
-          convCenario.passos.push(nova);
-          convMax += 2;
+      gerarProximaConv().then(novas=>{
+        if(novas){
+          novas.forEach(n=>{ convCenario.passos.push(n); convMax += 2; });
           $('convFeedback').className='feedback';
           $('convFeedback').innerHTML='';
           proximaConversa();
