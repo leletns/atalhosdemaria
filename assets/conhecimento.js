@@ -251,6 +251,154 @@ window.QUIZ_BLUE = [
     certa:1, explica:"Bloco de fechamento (17h-18h): follow-ups da cadência, 2ªs parcelas próximas do prazo, termos de amanhã assinados e caixa zerada. Toda conversa termina com próxima ação anotada." }
 ];
 
+/* ---------- QUIZ DE SITUAÇÕES — WhatsApp real (banco local + IA) ---------- */
+window.SITUACOES = [
+  { cat:"Preço cedo", nome:"Larissa", idade:36, cidade:"Niterói", origem:"anúncio Instagram",
+    contexto:"Primeira mensagem. Vocês nunca conversaram.",
+    fala:"Oi! Vi o anúncio de vocês sobre lipedema. Quanto custa a consulta??",
+    ops:[
+      "Oi Larissa! A consulta é R$ 1.800, ou 2× de R$ 900. Quer marcar?",
+      "Oi! Que bom que você chegou 💙 Claro, já te passo o investimento. Antes, me conta rapidinho: você já tem diagnóstico ou ainda está investigando?",
+      "Oi! Qual seu nome? Já tem diagnóstico? De que cidade você fala? Prefere presencial ou tele?"
+    ], certa:1,
+    explica:"Preço na primeira resposta mata a conversa. Acolha, prometa transparência e adie com UMA pergunta de qualificação." },
+  { cat:"Acolhimento", nome:"Beatriz", idade:41, cidade:"Rio de Janeiro", origem:"anúncio",
+    contexto:"Ela acabou de abrir a dor. Ainda não falou de médico nem de preço.",
+    fala:"Minhas pernas doem há uns 8 anos… já emagreci mil vezes e não muda nada. Sempre achei que o problema era eu 😔",
+    ops:[
+      "Entendi. Deixa eu te explicar como funciona a consulta aqui na Blue.",
+      "Isso é lipedema, com certeza. Mas fica tranquila que a cirurgia resolve.",
+      "Beatriz, te entendo demais… esse peso que não muda nem depois de emagrecer é exatamente o que muitas pacientes contam. Você não está sozinha nisso. Há quanto tempo a dor é o que mais te incomoda no dia a dia?"
+    ], certa:2,
+    explica:"Este é o momento mais importante: acolher e espelhar as palavras DELA. Não venda e nunca afirme diagnóstico." },
+  { cat:"Fora do RJ", nome:"Tainá", idade:33, cidade:"Recife", origem:"indicação de amiga",
+    contexto:"Ela já se apresentou. Acabou de dizer a cidade.",
+    fala:"Moro em Recife 😕 Aí fica difícil né? Vocês só atendem no Rio?",
+    ops:[
+      "Poxa, nesse caso fica difícil — o Dr. Rafael atende no Rio.",
+      "Tainá, fica tranquila 💙 Atendemos o Brasil inteiro. Pra quem é de fora do RJ a avaliação é por teleconsulta, um protocolo completo de 3 etapas com o próprio Dr. Rafael. Quer que eu te explique como funciona?",
+      "Atendemos por teleconsulta! São R$ 1.800 ou 2× de R$ 900."
+    ], certa:1,
+    explica:"Distância nunca encerra a conversa. Recife = teleconsulta de 3 etapas. Explique o protocolo antes do preço." },
+  { cat:"Plano de saúde", nome:"Fernanda", idade:38, cidade:"São Paulo", origem:"comparando clínicas",
+    contexto:"Lead fria que voltou. Ainda não reabriu a dor.",
+    fala:"Oi, sumida eu né 😅 Ainda tô pensando naquela consulta… vocês aceitam plano de saúde?",
+    ops:[
+      "Aceitamos não, mas você consegue reembolso pelo seu plano depois!",
+      "Oi! Não aceitamos plano, o atendimento é particular. A consulta é R$ 1.800.",
+      "Fernanda! Que alegria te ver de novo 💙 Nosso atendimento é particular — e por isso a consulta é 100% dedicada ao seu caso, sem a pressa do convênio. Me conta: como estão as pernas desde a última vez?"
+    ], certa:2,
+    explica:"Particular, sempre — e jamais prometa reembolso. Reconecte a DOR antes de falar número." },
+  { cat:"Está caro", nome:"Renata", idade:44, cidade:"Fortaleza", origem:"já viu o protocolo",
+    contexto:"Você já acolheu e mostrou o que a consulta inclui. Ela recebeu o valor.",
+    fala:"Nossa, é bem completo… mas R$ 1.800 tá caro pra mim 😔",
+    ops:[
+      "É o valor da expertise do Dr. Rafael. Infelizmente não temos desconto.",
+      "Temos uma opção mais acessível: o Dr. Leonardo, da equipe, por R$ 900!",
+      "Te entendo perfeitamente, Renata. E lembra do que você me contou — são anos convivendo com dor. Isso também tem custado caro, né? Dois caminhos: 2× de R$ 900 ou a avaliação com o Dr. Leonardo, da equipe, por R$ 900. Qual faz mais sentido?"
+    ], certa:2,
+    explica:"A-R-A: acolhe, resgata a dor DELA, avança com duas alternativas. Downsell cedo demais vira leilão de preço." },
+  { cat:"Vou pensar", nome:"Camila", idade:35, cidade:"Belo Horizonte", origem:"pediu o valor ontem",
+    contexto:"Depois do investimento ela esfriou a conversa.",
+    fala:"Hmm… vou pensar e te falo, tá?",
+    ops:[
+      "Ok! Qualquer coisa estou à disposição 😊",
+      "Claro, decisão importante merece calma 💙 Só me ajuda com uma coisa: o que pesa mais aí — o valor ou a data?",
+      "Tá bom! Posso te chamar na sexta pra gente retomar?"
+    ], certa:1,
+    explica:"\"Vou pensar\" esconde a objeção real. A pergunta destrava sem pressionar. \"Estou à disposição\" entrega a condução." },
+  { cat:"Sinal de compra", nome:"Patrícia", idade:39, cidade:"Goiânia", origem:"lista de espera GO",
+    contexto:"Agenda de Goiânia estava fechada. Você ofereceu teleconsulta. Ela acabou de pedir para marcar.",
+    fala:"Sabe que a tele me atende? Não aguento mais esperar! Como marco?",
+    ops:[
+      "Antes deixa eu te explicar mais algumas coisas sobre o lipedema…",
+      "Perfeito, Patrícia! 🎉 É simples: o agendamento confirma com o Pix antecipado — R$ 1.800 ou 2× de R$ 900. Tenho quinta 11h ou sexta 16h, qual fica melhor?",
+      "Te mando os dados do Pix!"
+    ], certa:1,
+    explica:"\"Como marco?\" é sinal de compra. Agenda AGORA: pagamento antecipado + duas opções de horário. Não volte a explicar." },
+  { cat:"Medo da cirurgia", nome:"Juliana", idade:29, cidade:"São Paulo", origem:"anúncio",
+    contexto:"Ela reabriu a dor e confessou o medo. Ainda não pediu fotos.",
+    fala:"Tô pior… incha e dói todo dia. Vou confessar: tenho medo de ficar com a pele toda irregular depois 😰",
+    ops:[
+      "Impossível ficar irregular! O resultado do Dr. Rafael é sempre perfeito.",
+      "Fica tranquila, o Dr. Rafael é excelente! Não vai dar nada errado.",
+      "Que bom você me contar isso — esse medo é super comum. Duas coisas: a consulta não é compromisso com cirurgia, é onde o Dr. Rafael te mostra os caminhos. E o acabamento é central na LipeDefinition®, com o Sublift. Cada caso é único, só a avaliação confirma. Quer que eu te explique como funciona?"
+    ], certa:2,
+    explica:"Nunca prometa resultado. Use o Sublift no gancho certo e feche com a frase segura + uma pergunta." },
+  { cat:"Lead sumiu", nome:"Amanda", idade:37, cidade:"Rio de Janeiro", origem:"recebeu o valor ontem e sumiu",
+    contexto:"Faz 26 horas desde o investimento. Ela visualizou e não respondeu.",
+    fala:"(silêncio — ela visualizou o valor ontem às 16h e não respondeu mais)",
+    ops:[
+      "Amanda?? Não vai marcar? O horário tá acabando.",
+      "Oi Amanda, tudo bem? Conseguiu ver minha mensagem? Qualquer dúvida me fala que te ajudo 💙",
+      "E aí, alguma novidade? Preciso da sua resposta hoje."
+    ], certa:1,
+    explica:"Toque leve em 2–4h, sem pressão inventada. Sumir após o valor quase sempre é objeção de preço não verbalizada." },
+  { cat:"Véspera / termo", nome:"Elisa", idade:42, cidade:"Rio de Janeiro", origem:"consulta amanhã às 10h",
+    contexto:"Você está no checklist da véspera. Ela confirmou presença, mas o termo digital ainda não foi assinado.",
+    fala:"Confirmado! Te vejo amanhã 💙",
+    ops:[
+      "Perfeito, Elisa! Até amanhã então 😊",
+      "Maravilha! Elisa, só falta um passo rápido na mesma conversa: o termo de autorização (assinatura digital, 1 minutinho no celular). Sem ele a consulta trava na recepção. Te mando agora, tá?",
+      "Ótimo. Você já enviou os exames?"
+    ], certa:1,
+    explica:"Confirmação e termodeautorização andam JUNTOS na mesma conversa. Sem termo, a consulta trava na recepção." },
+  { cat:"Cidade / protocolo", nome:"Sofia", idade:31, cidade:"Niterói", origem:"anúncio",
+    contexto:"Ela disse a cidade. Você ainda não explicou o protocolo.",
+    fala:"Pode contar! Ah, e eu moro em Niterói, viu?",
+    ops:[
+      "Como você é de fora, sua avaliação seria por teleconsulta, um protocolo de 3 etapas…",
+      "Perfeito, Niterói é pertinho 💙 Então você pode vir presencialmente: a avaliação é um protocolo completo de 4 etapas, bem diferente de uma consulta comum. Faz sentido pra você?",
+      "A consulta tem 4 etapas e custa R$ 1.800. Quer agendar?"
+    ], certa:1,
+    explica:"Niterói é RJ = presencial de 4 etapas. Cidade define protocolo. Não grude o preço na explicação." },
+  { cat:"Anúncio quente", nome:"Gabriela", idade:28, cidade:"Barra da Tijuca", origem:"tráfego pago, chegou agora",
+    contexto:"Lead nova de anúncio, há 3 minutos. Você ainda não mandou nada.",
+    fala:"Oi, vim do anúncio",
+    ops:[
+      "Oi! Já te respondo melhor mais tarde, tá no meio de outra conversa.",
+      "Oi Gabriela! Seja bem-vinda 💙 Vi que você veio do anúncio — me conta: você já tem diagnóstico de lipedema ou ainda está investigando?",
+      "Oi! A consulta é R$ 1.800 e o Dr. Rafael é o melhor. Quer marcar pra essa semana?"
+    ], certa:1,
+    explica:"Lead de tráfego: 5 minutos. Abertura + UMA pergunta (diagnóstico). Sem preço, sem discurso de autoridade ainda." },
+  { cat:"Agenda SP", nome:"Helena", idade:40, cidade:"Campinas", origem:"lista aguardando SP",
+    contexto:"Abriu agenda presencial em São Paulo hoje. Ela está na lista.",
+    fala:"Oi! Ainda tô esperando a data de SP… tem novidade?",
+    ops:[
+      "Ainda não temos data, te aviso quando tiver.",
+      "Helena, abriu agenda em SP 💙 As vagas são limitadas e costumam fechar no mesmo dia. Prefere que eu te reserve um horário — terça 10h ou quinta 14h?",
+      "Temos teleconsulta pra você fazer agora de Campinas, é melhor que esperar."
+    ], certa:1,
+    explica:"Vagas em SP são gatilho real. Avisar no mesmo dia, com duas opções concretas. Não descarte o presencial que ela pediu." },
+  { cat:"Goiânia fechada", nome:"Lívia", idade:34, cidade:"Goiânia", origem:"indicação",
+    contexto:"Ela quer presencial em Goiânia. A agenda do mês já fechou.",
+    fala:"Queria muito o atendimento aí em Goiânia. Quando o doutor vem?",
+    ops:[
+      "A agenda de Goiânia está fechada no momento.",
+      "O atendimento em Goiânia é mensal e as vagas voam! Posso te colocar na lista da próxima data. Se não quiser esperar, a teleconsulta tem o mesmo protocolo de avaliação e você faz de casa. Prefere a lista ou garantir a tele essa semana?",
+      "Vou verificar a data e te aviso, tá?"
+    ], certa:1,
+    explica:"Nunca termine com um \"não\" seco. Duas portas: lista da próxima data ou tele agora." },
+  { cat:"Pix não caiu", nome:"Marina", idade:45, cidade:"Rio de Janeiro", origem:"agendou hoje de manhã",
+    contexto:"Você enviou o Pix às 9h. São 11h30 e o pagamento não caiu. Horário reservado para quinta 10h.",
+    fala:"(sem resposta desde o envio da chave Pix)",
+    ops:[
+      "Marina, se não pagar até o fim do dia eu libero sua vaga pra outra paciente.",
+      "Oi Marina, conseguiu fazer o Pix? Qualquer dificuldade me avisa que te ajudo 💙",
+      "Oi! Só lembrando que sem o Pix o agendamento não existe."
+    ], certa:1,
+    explica:"Toque leve em 2 horas, tom de ajuda. Escassez só se for real — e com gentileza, nunca ameaça." },
+  { cat:"Cirurgia / faixa", nome:"Daniela", idade:47, cidade:"Vitória", origem:"já tem diagnóstico",
+    contexto:"Meio de funil. Ela ainda não viu o protocolo da consulta.",
+    fala:"Quanto custa a cirurgia? Só pra eu já ir me organizando.",
+    ops:[
+      "Depende, mas costuma ficar em torno de R$ 80 mil.",
+      "Não posso falar de cirurgia por mensagem.",
+      "Daniela, a cirurgia varia entre R$ 50 e 150 mil, sempre condicionada à avaliação — na consulta você sai com o plano exato pro seu caso. Posso te contar o que essa avaliação inclui?"
+    ], certa:2,
+    explica:"Só faixa (50–150 mil), sempre condicionada à avaliação. Nunca média inventada. Emende valor da consulta, não pare no número." }
+];
+
 /* ---------- CONVERSA GUIADA — cenários sem script ---------- */
 /* Cada passo: fala da lead + 3 respostas possíveis (pts: 2 = elite, 1 = ok, 0 = erro) */
 window.CONVERSAS = [

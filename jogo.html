@@ -112,6 +112,11 @@
   .situacao .rotulo{font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--azul);margin-bottom:6px}
   .situacao .texto{font-size:16px;font-weight:600;line-height:1.5}
   .situacao .etapa-dica{margin-top:8px;font-size:12px;color:#8A96A5}
+  .sit-ficha{font-size:12.5px;color:#8A96A5;margin:4px 0 10px;line-height:1.45}
+  .sit-ficha b{color:var(--tinta);font-weight:700}
+  .situacao .texto.sit-ctx,.sit-ctx{font-size:13.5px;color:#5C6B7E;font-weight:400;line-height:1.5;margin-bottom:10px}
+  .sit-fala{background:#fff;border:1px solid var(--areia);border-radius:16px 16px 16px 5px;padding:13px 16px;font-size:15.5px;font-weight:600;line-height:1.5;box-shadow:0 2px 8px rgba(34,52,74,.04)}
+  .sit-oque{font-size:13px;font-weight:700;color:var(--azul-forte);margin:14px 0 8px}
 
   .opcoes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .opcoes.coluna{grid-template-columns:1fr}
@@ -249,15 +254,15 @@
       <button class="modo destaque" data-modo="conversa">
         <span class="selo-modo principal">Principal</span>
         <span class="emoji">💬</span>
-        <h3>Conversa guiada</h3>
-        <p>Conversas reais, do "oi" ao Pix. Escolha a melhor resposta em cada momento e aprenda a conduzir sem depender de script.</p>
+        <h3>Conversa guiada infinita</h3>
+        <p>Conversas reais que nunca acabam — a IA cria a próxima situação e você sobe de nível conforme conduz. Escolha a melhor resposta em cada momento.</p>
         <span class="recorde" id="recConversa">Recorde: —</span>
       </button>
       <button class="modo destaque" data-modo="situacoes">
         <span class="selo-modo ia">Gemini ✨</span>
         <span class="emoji">🎯</span>
         <h3>Quiz de situações</h3>
-        <p>A IA inventa 8 conversas inéditas toda vez — nome, cidade, objeção e o que a lead acabou de mandar. Você escolhe o próximo passo.</p>
+        <p>8 WhatsApps reais — nome, cidade, o que ela mandou. Você escolhe a próxima mensagem. A IA troca o elenco a cada partida.</p>
         <span class="recorde" id="recSituacoes">Recorde: —</span>
       </button>
       <button class="modo destaque" data-modo="simulador">
@@ -318,8 +323,11 @@
     </div>
     <div class="situacao">
       <div class="rotulo" id="saberCat">Conhecimento</div>
-      <div class="texto" id="saberPergunta"></div>
+      <div class="sit-ficha" id="saberFicha" style="display:none"></div>
+      <div class="texto sit-ctx" id="saberPergunta"></div>
+      <div class="sit-fala" id="saberFala" style="display:none"></div>
     </div>
+    <p class="sit-oque" id="saberOque" style="display:none">O que você responde agora?</p>
     <div class="opcoes coluna" id="saberOpcoes"></div>
     <div class="feedback" id="saberFeedback"></div>
     <div class="acoes"><button class="btn" id="saberProxima" style="display:none">Próxima →</button></div>
@@ -328,7 +336,7 @@
   <!-- ================= PALCO CONVERSA GUIADA ================= -->
   <section class="palco" id="palcoConversa">
     <div class="palco-top">
-      <h3>Conversa guiada 💬</h3>
+      <h3>Conversa guiada infinita 💬</h3>
       <span class="rodada" id="convRodada"></span>
       <button class="sair" data-sair>Sair</button>
     </div>
@@ -338,6 +346,7 @@
     <div class="opcoes coluna" id="convOpcoes"></div>
     <div class="feedback" id="convFeedback"></div>
     <div class="acoes"><button class="btn" id="convProxima" style="display:none">Continuar →</button></div>
+    <p class="conv-pergunta" style="margin-top:10px;color:#8A96A5">A conversa não termina — cada resposta sua alimenta a próxima situação. Suba de nível: acolhimento → qualificação → valor → preço → objeções → fechamento → follow-up → véspera.</p>
   </section>
 
   <!-- ================= PALCO SEQUÊNCIA ================= -->
@@ -554,26 +563,77 @@
   let saberFila=[], saberRodada=0, saberTravado=false, saberTotal=12, saberChave='saber', saberIA=false;
 
   const SIT_PROMPT = [
-    'Gere um quiz INÉDITO de 8 perguntas para treinar a Maria, comercial 1 da Clínica Blue.',
-    'Cada item é uma SITUAÇÃO de WhatsApp, não uma pergunta teórica. Inclua: nome da lead, idade aproximada, cidade, de onde veio (anúncio, indicação, retorno) e a FALA dela entre aspas.',
-    'As 3 opções são o que a Maria responderia em seguida — linguagem natural de WhatsApp, sem códigos de atalho visíveis nas opções.',
-    'ops[certa] = decisão de elite (regras de ouro, A-R-A, valor antes de preço, 1 pergunta, cidade define protocolo, nunca promete diagnóstico/resultado/plano).',
-    'Uma opção é "quase" (intenção certa, execução fraca) e outra é erro grave (preço cedo, promessa, 3 perguntas, não seco, pular acolhimento).',
-    'Varie os 8 temas, sem repetir: preço na primeira mensagem; fora do RJ; plano de saúde; "está caro"; lead que sumiu; véspera sem termo; agenda SP; Goiânia fechada; medo de pele irregular; lead de anúncio quente.',
-    'Valores oficiais: consulta R$ 1.800 ou 2× R$ 900; retorno R$ 900; cirurgia faixa R$ 50–150 mil; Dr. Leonardo R$ 900; particular, sem plano.',
-    'Formato: array JSON de 8 objetos {cat, p, ops:[3 strings], certa:0|1|2, explica}.',
-    'cat = rótulo curto da etapa. p = a situação completa. explica = 1 a 2 frases dizendo POR QUE a certa conduz e o que a errada quebra.',
-    'Não invente valores, hospitais ou técnicas fora do playbook. Não use markdown.'
+    'Gere 6 situações INÉDITAS de WhatsApp para treinar a Maria (comercial 1, Clínica Blue).',
+    'JSON: array de objetos {cat,nome,idade,cidade,origem,contexto,fala,ops,certa,explica}',
+    '- cat: rótulo curto (Preço cedo, Acolhimento, Fora do RJ, Plano, Está caro, Vou pensar, Sinal de compra, Medo, Sumiu, Termo, SP, Goiânia, Pix, Cirurgia)',
+    '- fala: EXATAMENTE o que a lead mandou, 1 a 3 linhas, tom de WhatsApp brasileiro (pode ter emoji e erro leve)',
+    '- contexto: 1 frase do que já aconteceu na conversa, para a Maria',
+    '- ops: 3 respostas que a Maria mandaria agora, em linguagem de WhatsApp, SEM códigos de atalho',
+    '- certa: índice 0, 1 ou 2 da opção de elite (regras de ouro, A-R-A, valor antes de preço, 1 pergunta, cidade=protocolo, nunca promete diagnóstico/resultado/plano)',
+    '- as outras duas: uma "quase" e uma erro grave',
+    '- explica: 1 frase, por que a certa conduz',
+    'Valores oficiais: consulta R$ 1.800 ou 2×900; retorno 900; cirurgia faixa 50–150 mil; Dr. Leonardo 900; particular.',
+    'Nomes e cidades brasileiros reais, NÃO use Camila, Renata, Juliana, Patrícia, Larissa, Beatriz, Tainá, Fernanda, Amanda, Elisa, Sofia, Gabriela, Helena, Lívia, Marina, Daniela.',
+    'Não use markdown.'
   ].join('\n');
 
+  function normalizaSit(q){
+    if(!q) return null;
+    const ops = (q.ops||[]).map(o=> typeof o==='string' ? o : (o.t||o.texto||'')).filter(Boolean);
+    if(ops.length<3) return null;
+    let certa = Number(q.certa);
+    if(!(certa>=0 && certa<ops.length)) certa = 0;
+    const fala = String(q.fala || q.lead || '').trim();
+    let contexto = String(q.contexto || q.p || '').trim();
+    if(!fala && !contexto) return null;
+    if(!fala && contexto){
+      const m = contexto.match(/["“”](.+?)["“”]/);
+      return {
+        cat: q.cat || 'Situação',
+        nome: q.nome || '',
+        idade: q.idade || '',
+        cidade: q.cidade || '',
+        origem: q.origem || '',
+        contexto: contexto,
+        fala: m ? m[1] : '',
+        ops: ops.slice(0,3),
+        certa: certa,
+        explica: q.explica || ''
+      };
+    }
+    return {
+      cat: q.cat || 'Situação',
+      nome: q.nome || '',
+      idade: q.idade || '',
+      cidade: q.cidade || '',
+      origem: q.origem || '',
+      contexto: contexto,
+      fala: fala,
+      ops: ops.slice(0,3),
+      certa: certa,
+      explica: q.explica || ''
+    };
+  }
+
+  function bancoSituacoes(){
+    return embaralha((window.SITUACOES||[]).map(normalizaSit).filter(Boolean));
+  }
+
   async function gerarSituacoesIA(){
-    const extra = 'Você é o coach de treino da Maria. Seja específico, humano e fiel ao playbook da Blue.';
+    const extra = 'Você é o coach de treino da Maria. Situações específicas, humanas, fiéis ao playbook da Blue.';
     const dados = await window.GeminiBlue.perguntarJSON(
-      SIT_PROMPT + '\nSemente de variedade: ' + Date.now() + ' / ' + Math.random().toString(36).slice(2,8),
-      [], extra, { temperature: 0.95, maxOutputTokens: 3200 }
+      SIT_PROMPT + '\nSemente: ' + Date.now() + '-' + Math.random().toString(36).slice(2,8),
+      [], extra, { temperature: 0.9, maxOutputTokens: 2800 }
     );
-    const lista = Array.isArray(dados) ? dados : (dados.perguntas || dados.quiz || []);
-    return lista.filter(q=>q && q.p && Array.isArray(q.ops) && q.ops.length>=3 && typeof q.certa==='number');
+    const lista = Array.isArray(dados) ? dados : (dados.perguntas || dados.quiz || dados.situacoes || []);
+    return lista.map(normalizaSit).filter(Boolean);
+  }
+
+  function mostraSitExtras(on){
+    $('saberFicha').style.display = on ? '' : 'none';
+    $('saberFala').style.display = on ? '' : 'none';
+    $('saberOque').style.display = on ? '' : 'none';
+    $('saberPergunta').classList.toggle('sit-ctx', on);
   }
 
   async function comecaSaber(comIA){
@@ -581,43 +641,41 @@
     saberChave = comIA ? 'situacoes' : 'saber';
     saberTotal = comIA ? SIT_RODADAS : SABER_RODADAS;
     saberRodada = 0;
+    saberTravado = false;
     $('saberTitulo').textContent = comIA ? 'Quiz de situações 🎯' : 'Quiz Blue 🧠';
     mostra('palcoSaber');
-    $('saberCat').textContent = comIA ? 'IA montando as situações…' : 'Conhecimento';
-    $('saberPergunta').textContent = comIA ? 'Cada partida é única. Um segundo — estou criando 8 conversas novas para você.' : '';
-    $('saberOpcoes').innerHTML = '';
     $('saberFeedback').className='feedback';
     $('saberProxima').style.display='none';
-    $('saberRodada').textContent = '…';
+    $('saberOpcoes').innerHTML = '';
 
     if(!comIA){
+      mostraSitExtras(false);
+      $('saberFicha').textContent = '';
+      $('saberFala').textContent = '';
       saberFila = embaralha(window.QUIZ_BLUE);
       proximaSaber();
       return;
     }
 
+    mostraSitExtras(true);
+    const local = bancoSituacoes().slice(0, SIT_RODADAS);
+    saberFila = local.slice().reverse();
+    saberTotal = Math.min(SIT_RODADAS, saberFila.length);
+    $('saberCat').textContent = 'WhatsApp ao vivo';
+    proximaSaber();
+
     const status = await window.GeminiBlue.statusConexao();
-    if(status==='off'){
-      $('saberPergunta').textContent = 'O quiz de situações precisa da IA. Configure a chave ou publique no Netlify com GEMINI_API_KEY.';
-      $('saberOpcoes').innerHTML = '<button class="btn" type="button" id="sitChave">Configurar chave e tentar de novo</button>';
-      document.getElementById('sitChave').addEventListener('click', ()=>{ window.GeminiBlue.configurarChave(); comecaSaber(true); });
-      return;
-    }
-    try{
-      const geradas = await gerarSituacoesIA();
-      if(geradas.length<4) throw new Error('A IA devolveu poucas perguntas.');
-      saberFila = embaralha(geradas);
-      saberTotal = Math.min(SIT_RODADAS, saberFila.length);
-      proximaSaber();
-    }catch(err){
-      $('saberCat').textContent = 'Fallback · banco local';
-      $('saberPergunta').textContent = 'Não consegui gerar situações novas agora (' + err.message + '). Vou usar o quiz clássico para você não perder o treino.';
-      saberFila = embaralha(window.QUIZ_BLUE);
-      saberTotal = SABER_RODADAS;
-      saberChave = 'saber';
-      setTimeout(proximaSaber, 1600);
-    }
+    if(status==='off') return;
+    gerarSituacoesIA().then(geradas=>{
+      if(!saberIA || geradas.length<3) return;
+      const jaVistas = saberRodada;
+      const novas = embaralha(geradas);
+      const resto = novas.slice(0, Math.max(0, saberTotal - jaVistas));
+      if(!resto.length) return;
+      saberFila = resto.reverse();
+    }).catch(()=>{});
   }
+
   function proximaSaber(){
     saberTravado = false;
     if(saberRodada>=saberTotal || saberFila.length===0){
@@ -625,22 +683,46 @@
         saberIA ? 'Situações concluídas!' : 'Quiz Blue concluído!',
         'Precisão de ' + Math.round(100*acertos/Math.max(1,tentativas)) + '%.' +
         (saberIA
-          ? ' Cada rodada foi uma conversa inédita — no WhatsApp real, a lead nunca se repete. Jogue de novo para treinar outros nomes, cidades e objeções.'
+          ? ' No WhatsApp real a lead nunca se repete — jogue de novo para treinar outros nomes, cidades e objeções.'
           : ' Esse conhecimento é o que te deixa segura em qualquer pergunta — sem precisar de script. Repita até cravar 100%.'),
         saberIA ? '🎯' : '🧠');
       return;
     }
-    const q = saberFila.pop();
+    const raw = saberFila.pop();
+    const q = saberIA ? (normalizaSit(raw) || raw) : raw;
+    if(saberIA && (!q || !q.ops || q.ops.length<3)) return proximaSaber();
     saberRodada++;
     $('saberRodada').textContent = saberRodada + ' / ' + saberTotal;
-    $('saberCat').textContent = q.cat || (saberIA ? 'Situação real' : 'Conhecimento');
-    $('saberPergunta').textContent = q.p;
+    $('saberCat').textContent = (q.cat || (saberIA ? 'Situação' : 'Conhecimento'));
     $('saberFeedback').className='feedback';
     $('saberProxima').style.display='none';
 
+    if(saberIA){
+      const meta = [q.nome && (q.nome + (q.idade ? ', '+q.idade+' anos' : '')), q.cidade, q.origem].filter(Boolean);
+      const ficha = $('saberFicha');
+      ficha.textContent = '';
+      if(meta.length){
+        const b = document.createElement('b');
+        b.textContent = meta[0];
+        ficha.appendChild(b);
+        if(meta.length>1) ficha.appendChild(document.createTextNode(' · ' + meta.slice(1).join(' · ')));
+        ficha.style.display = '';
+      } else {
+        ficha.style.display = 'none';
+      }
+      $('saberPergunta').textContent = q.contexto || 'Ela mandou isto agora.';
+      $('saberFala').textContent = q.fala || '…';
+      $('saberFala').style.display = q.fala ? '' : 'none';
+      $('saberOque').style.display = '';
+    } else {
+      mostraSitExtras(false);
+      $('saberPergunta').textContent = q.p;
+    }
+
     const box = $('saberOpcoes');
     box.innerHTML='';
-    const ordem = embaralha(q.ops.map((t,i)=>({t, certa: i===q.certa})));
+    const ops = q.ops;
+    const ordem = embaralha(ops.map((t,i)=>({t, certa: i===q.certa})));
     ordem.forEach(op=>{
       const b = document.createElement('button');
       b.className='opcao texto';
@@ -657,11 +739,11 @@
           const bonus = Math.min(sequencia,5)*5;
           ganhaPontos(25+bonus);
           fb.className='feedback on ok';
-          fb.innerHTML='<b>Exato! +'+(25+bonus)+' pts.</b> '+(q.explica||'');
+          fb.innerHTML='<b>Decisão de elite! +'+(25+bonus)+' pts.</b> '+(q.explica||'');
         } else {
           sequencia=0;
           b.classList.add('errada');
-          Array.from(box.children).forEach(o=>{ if(ordem[Array.from(box.children).indexOf(o)].certa) o.classList.add('certa'); });
+          Array.from(box.children).forEach((o,i)=>{ if(ordem[i].certa) o.classList.add('certa'); });
           atualizaPlacar();
           fb.className='feedback on erro';
           fb.innerHTML='<b>Essa esfriaria a lead.</b> '+(q.explica||'');
@@ -671,21 +753,71 @@
       box.appendChild(b);
     });
   }
+
   $('saberProxima').addEventListener('click', proximaSaber);
 
-  /* ================= CONVERSA GUIADA ================= */
-  let convCenario=null, convPasso=0, convPts=0, convMax=0, convTravado=false, convFila=[];
+  /* ================= CONVERSA GUIADA — infinita com níveis ================= */
+  const CONV_NIVEIS = ['Acolhida', 'Qualificação', 'Valor antes de preço', 'Investimento', 'Objeções', 'Fechamento', 'Follow-up', 'Véspera / termo'];
+  let convCenario=null, convPasso=0, convPts=0, convMax=0, convTravado=false, convFila=[], convHistorico=[], convRodadaGlobal=0, convGerando=false;
+
+  function convNivelAtual(){ return Math.min(CONV_NIVEIS.length-1, Math.floor(convRodadaGlobal/3)); }
+
+  function convMetaRodada(n){
+    const nivel = convNivelAtual();
+    const meta = CONV_NIVEIS[nivel] + ' · Nível ' + (nivel+1);
+    return meta + ' · Mensagem ' + (n+1);
+  }
+
+  const CONV_PROMPT = [
+    'Continue esta conversa de WhatsApp da Maria (comercial 1, Clínica Blue) com uma lead. A conversa nunca acaba; cada bloco é uma nova situação coerente com o que já aconteceu.',
+    'JSON: objeto com {lead, ops:[3 strings], certa:0|1|2, fb}',
+    '- lead: a próxima mensagem da lead, curta, em tom de WhatsApp',
+    '- ops: três respostas que a Maria poderia mandar AGORA',
+    '- certa: índice da opção de elite (acolhimento, valor antes de preço, 1 pergunta, cidade=protocolo, nunca promete diagnóstico/resultado/plano)',
+    '- fb: 1 frase explicando por que a certa conduz',
+    'Nível atual: {NIVEL}. Varie os temas sem repetir: preço, plano, distância, medo, sumiu, agenda SP/GO, Pix, cirurgia, termo, véspera.',
+    'Não repita nomes de leads já usados nesta conversa. Não use markdown.'
+  ].join('\n');
+
+  async function gerarProximaConv(){
+    if(convGerando) return null;
+    convGerando = true;
+    try{
+      const extra = 'Você é a lead de WhatsApp. Continue a conversa de forma realista e fiel ao playbook da Blue. A conversa nunca termina de verdade.';
+      const historico = convHistorico.slice(-10).map(h=>({role: h.quem==='lead'?'user':'model', parts:[{text:h.texto}]}));
+      const dados = await window.GeminiBlue.perguntarJSON(
+        CONV_PROMPT.replace('{NIVEL}', CONV_NIVEIS[convNivelAtual()]) + '\n\nHistórico da conversa (últimas trocas):\n' + JSON.stringify(historico.map(h=>h.texto)),
+        [],
+        extra,
+        { temperature: 0.85, maxOutputTokens: 1200 }
+      );
+      if(!dados || !dados.lead || !Array.isArray(dados.ops) || dados.ops.length<3) return null;
+      return {
+        lead: String(dados.lead).trim(),
+        ops: dados.ops.slice(0,3).map(o=>String(o).trim()),
+        certa: Math.max(0, Math.min(2, Number(dados.certa)||0)),
+        fb: String(dados.fb||'').trim()
+      };
+    }catch(e){
+      return null;
+    }finally{
+      convGerando = false;
+    }
+  }
 
   function comecaConversa(){
     convFila = embaralha(window.CONVERSAS);
     convCenario = convFila[0];
     convPasso = 0; convPts = 0;
     convMax = convCenario.passos.length*2;
+    convRodadaGlobal = 0;
+    convHistorico = [];
     $('convPerfil').textContent = 'Lead: ' + convCenario.perfil;
     $('convChat').innerHTML='';
     mostra('palcoConversa');
     proximaConversa();
   }
+
   function convBolha(texto, classe){
     const div = document.createElement('div');
     div.className = 'msg ' + classe;
@@ -693,20 +825,38 @@
     $('convChat').appendChild(div);
     $('convChat').scrollTop = $('convChat').scrollHeight;
   }
+
   function proximaConversa(){
     convTravado = false;
     if(convPasso>=convCenario.passos.length){
-      const nota = Math.round(100*convPts/convMax);
-      const bonusFinal = nota===100 ? 50 : 0;
-      if(bonusFinal) ganhaPontos(bonusFinal);
-      terminaJogo('conversa', pontos, 'pts',
-        nota===100 ? 'Conversa impecável!' : nota>=70 ? 'Boa condução!' : 'Conversa para revisar',
-        'Você conduziu "'+convCenario.nome+'" com '+nota+'% de decisões de elite'+(bonusFinal?' (+50 de bônus por conversa perfeita!)':'')+'. Jogue de novo: os cenários mudam a cada rodada.',
-        nota===100 ? '🏆' : nota>=70 ? '💪' : '📚');
+      if(convGerando){
+        $('convFeedback').className='feedback';
+        $('convFeedback').innerHTML='<b>Gerando a próxima situação…</b>';
+        return;
+      }
+      gerarProximaConv().then(nova=>{
+        if(nova){
+          convCenario.passos.push(nova);
+          convMax += 2;
+          $('convFeedback').className='feedback';
+          $('convFeedback').innerHTML='';
+          proximaConversa();
+        } else {
+          const nota = Math.round(100*convPts/convMax);
+          const bonusFinal = nota===100 ? 50 : 0;
+          if(bonusFinal) ganhaPontos(bonusFinal);
+          terminaJogo('conversa', pontos, 'pts',
+            nota===100 ? 'Conversa impecável!' : nota>=70 ? 'Boa condução!' : 'Conversa para revisar',
+            'Você conduziu "'+convCenario.nome+'" com '+nota+'% de decisões de elite'+(bonusFinal?' (+50 de bônus por conversa perfeita!)':'')+'. Jogue de novo: os cenários mudam a cada rodada.',
+            nota===100 ? '🏆' : nota>=70 ? '💪' : '📚');
+        }
+      });
       return;
     }
     const passo = convCenario.passos[convPasso];
-    $('convRodada').textContent = 'Mensagem ' + (convPasso+1) + ' de ' + convCenario.passos.length;
+    convRodadaGlobal++;
+    $('convRodada').textContent = convMetaRodada(convPasso);
+    convHistorico.push({quem:'lead', texto: passo.lead});
     convBolha(passo.lead, 'lead');
     $('convFeedback').className='feedback';
     $('convProxima').style.display='none';
@@ -744,7 +894,7 @@
           fb.className='feedback on erro';
           fb.innerHTML='<b>Essa esfriaria a lead.</b> '+op.fb;
         }
-        // registra a resposta escolhida no chat
+        convHistorico.push({quem:'maria', texto: op.t});
         convBolha(op.t, 'maria');
         $('convPergunta').style.display='none';
         box.innerHTML='';
