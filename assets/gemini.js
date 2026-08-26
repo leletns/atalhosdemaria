@@ -6,19 +6,18 @@
    2) Chave local no navegador (localStorage) — para uso imediato
       sem deploy, configurada pelo link "Configurar chave".
 
-   Resiliência: escada de modelos com fallback automático quando a
-   cota gratuita de um deles esgota (erro 429) ou o modelo está
-   indisponível (404/503). Erros chegam para a Maria em português
-   claro, com o que fazer.
+   Chaves novas do AI Studio (prefixo AQ.) autenticam pelo header
+   x-goog-api-key. A escada de modelos usa a família 3.x.
    ============================================================ */
 (function(){
   const CHAVE_LOCAL = 'blue_gemini_api_key';
   const MODELOS = [
-    'gemini-2.5-flash-lite', // maior limite por minuto no plano gratuito
-    'gemini-2.5-flash',
-    'gemini-2.0-flash'
+    'gemini-3.5-flash-lite',
+    'gemini-3.6-flash',
+    'gemini-flash-latest',
+    'gemini-flash-lite-latest'
   ];
-  let netlifyOk = null; // cache: null = ainda não testado
+  let netlifyOk = null;
 
   function chaveLocal(){ return (localStorage.getItem(CHAVE_LOCAL)||'').trim(); }
 
@@ -51,17 +50,18 @@
     return 'off';
   }
 
-  function montaContents(pergunta, historico, extra){
+  function montaContents(pergunta, historico, extra, opcoes){
     const contents = [];
     (historico||[]).forEach(h=>{
       contents.push({ role:'user',  parts:[{ text:h.eu }] });
       contents.push({ role:'model', parts:[{ text:h.bot }] });
     });
     contents.push({ role:'user', parts:[{ text:pergunta }] });
+    const cfg = Object.assign({ temperature: 0.6, maxOutputTokens: 900 }, opcoes||{});
     return {
       system_instruction: { parts: [{ text: (window.PLAYBOOK_RESUMO||'') + (extra ? '\n\n' + extra : '') }] },
       contents,
-      generationConfig: { temperature: 0.6, maxOutputTokens: 900 }
+      generationConfig: cfg
     };
   }
 
@@ -72,14 +72,25 @@
   }
 
   function erroAmigavel(status){
-    if(status===429) return 'A cota gratuita do Gemini esgotou por agora (erro 429). Ela renova sozinha: aguarde 1–2 minutos e tente de novo. Se acontecer o dia todo, o limite diário foi atingido — renova à meia-noite (horário do Pacífico) ou dá para ativar o faturamento em aistudio.google.com para nunca mais travar.';
-    if(status===400 || status===403) return 'A chave da API parece inválida ou sem permissão. Confira a chave em aistudio.google.com.';
+    if(status===429) return 'A cota do Gemini esgotou por agora (erro 429). Aguarde 1–2 minutos e tente de novo. Se persistir o dia todo, o limite diário foi atingido.';
+    if(status===400 || status===403) return 'A chave da API parece inválida ou sem permissão. Confira em aistudio.google.com.';
     if(status===503) return 'Os servidores do Gemini estão sobrecarregados neste momento. Aguarde alguns segundos e tente de novo.';
     return 'O servidor da IA respondeu com erro (' + status + '). Tente novamente em instantes.';
   }
 
-  async function perguntar(pergunta, historico, extra){
-    const corpo = montaContents(pergunta, historico, extra);
+  async function chamaModelo(corpo, chave, modelo){
+    return fetch('https://generativelanguage.googleapis.com/v1beta/models/' + modelo + ':generateContent', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-goog-api-key': chave
+      },
+      body: JSON.stringify(corpo)
+    });
+  }
+
+  async function perguntar(pergunta, historico, extra, opcoes){
+    const corpo = montaContents(pergunta, historico, extra, opcoes);
 
     if(await testaNetlify()){
       const r = await fetch('/.netlify/functions/gemini', {
@@ -99,11 +110,7 @@
 
     let ultimoStatus = 0;
     for(const modelo of MODELOS){
-      const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + modelo + ':generateContent?key=' + encodeURIComponent(chave), {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify(corpo)
-      });
+      const r = await chamaModelo(corpo, chave, modelo);
       if(r.ok){
         const data = await r.json();
         const texto = extraiTexto(data);
@@ -111,11 +118,24 @@
         return texto;
       }
       ultimoStatus = r.status;
-      // cota esgotada / modelo indisponível / sobrecarga: tenta o próximo modelo
       if(r.status!==429 && r.status!==404 && r.status!==503) break;
     }
     throw new Error(erroAmigavel(ultimoStatus));
   }
 
-  window.GeminiBlue = { perguntar, configurarChave, statusConexao, chaveLocal };
+  function parseJSON(txt){
+    const limpo = txt.replace(/```json|```/g,'').trim();
+    const ini = limpo.indexOf('{')>=0 && (limpo.indexOf('[')===-1 || limpo.indexOf('{')<limpo.indexOf('['))
+      ? limpo.indexOf('{') : limpo.indexOf('[');
+    const fim = Math.max(limpo.lastIndexOf('}'), limpo.lastIndexOf(']'));
+    return JSON.parse(limpo.slice(ini, fim+1));
+  }
+
+  async function perguntarJSON(pergunta, historico, extra, opcoes){
+    const cfg = Object.assign({ temperature: 0.85, maxOutputTokens: 2500 }, opcoes||{});
+    const texto = await perguntar(pergunta + '\n\nResponda SOMENTE JSON válido, sem markdown e sem crases.', historico, extra, cfg);
+    return parseJSON(texto);
+  }
+
+  window.GeminiBlue = { perguntar, perguntarJSON, configurarChave, statusConexao, chaveLocal };
 })();

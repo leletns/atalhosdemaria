@@ -1,3 +1,6 @@
 .claude/
 node_modules/
 .netlify/
+.env
+.env.*
+conectar-ia.local.js

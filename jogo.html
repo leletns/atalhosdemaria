@@ -253,11 +253,18 @@
         <p>Conversas reais, do "oi" ao Pix. Escolha a melhor resposta em cada momento e aprenda a conduzir sem depender de script.</p>
         <span class="recorde" id="recConversa">Recorde: —</span>
       </button>
-      <button class="modo" data-modo="simulador">
+      <button class="modo destaque" data-modo="situacoes">
+        <span class="selo-modo ia">Gemini ✨</span>
+        <span class="emoji">🎯</span>
+        <h3>Quiz de situações</h3>
+        <p>A IA inventa 8 conversas inéditas toda vez — nome, cidade, objeção e o que a lead acabou de mandar. Você escolhe o próximo passo.</p>
+        <span class="recorde" id="recSituacoes">Recorde: —</span>
+      </button>
+      <button class="modo destaque" data-modo="simulador">
         <span class="selo-modo ia">Gemini ✨</span>
         <span class="emoji">🤖</span>
         <h3>Simulador de lead</h3>
-        <p>A IA vira uma lead de verdade — com dúvidas, objeções e pressa. Atenda com suas palavras e o coach avalia cada resposta.</p>
+        <p>A IA vira uma lead nova a cada partida — com história, medo e objeção escondida. Atenda com suas palavras e o coach avalia cada resposta.</p>
         <span class="recorde" id="recSimulador">Melhor nota: —</span>
       </button>
       <button class="modo" data-modo="jornada">
@@ -305,7 +312,7 @@
   <!-- ================= PALCO QUIZ BLUE (conhecimento) ================= -->
   <section class="palco" id="palcoSaber">
     <div class="palco-top">
-      <h3>Quiz Blue 🧠</h3>
+      <h3 id="saberTitulo">Quiz Blue 🧠</h3>
       <span class="rodada" id="saberRodada">1 / 12</span>
       <button class="sair" data-sair>Sair</button>
     </div>
@@ -490,6 +497,7 @@
     const r = prog.recordes;
     $('recSaber').textContent     = 'Recorde: ' + (r.saber     != null ? r.saber+' pts'     : '—');
     $('recConversa').textContent  = 'Recorde: ' + (r.conversa  != null ? r.conversa+' pts'  : '—');
+    $('recSituacoes').textContent = 'Recorde: ' + (r.situacoes != null ? r.situacoes+' pts' : '—');
     $('recJornada').textContent   = 'Recorde: ' + (r.jornada   != null ? r.jornada+' pts'   : '—');
     $('recRelampago').textContent = 'Recorde: ' + (r.relampago != null ? r.relampago+' pts' : '—');
     $('recSequencia').textContent = 'Recorde: ' + (r.sequencia != null ? r.sequencia+' pts' : '—');
@@ -515,8 +523,9 @@
   function iniciaModo(){
     pontos=0; sequencia=0; acertos=0; tentativas=0;
     atualizaPlacar();
-    if(modoAtual==='saber')     comecaSaber();
-    if(modoAtual==='conversa')  comecaConversa();
+    if(modoAtual==='saber')      comecaSaber(false);
+    if(modoAtual==='situacoes')  comecaSaber(true);
+    if(modoAtual==='conversa')   comecaConversa();
     if(modoAtual==='jornada')   comecaQuiz(false);
     if(modoAtual==='relampago') comecaQuiz(true);
     if(modoAtual==='sequencia') comecaSeq();
@@ -539,27 +548,92 @@
   }
   $('fimDeNovo').addEventListener('click', iniciaModo);
 
-  /* ================= QUIZ BLUE (conhecimento) ================= */
+  /* ================= QUIZ BLUE + QUIZ DE SITUAÇÕES (IA) ================= */
   const SABER_RODADAS = 12;
-  let saberFila=[], saberRodada=0, saberTravado=false;
+  const SIT_RODADAS = 8;
+  let saberFila=[], saberRodada=0, saberTravado=false, saberTotal=12, saberChave='saber', saberIA=false;
 
-  function comecaSaber(){
-    saberFila = embaralha(window.QUIZ_BLUE);
+  const SIT_PROMPT = [
+    'Gere um quiz INÉDITO de 8 perguntas para treinar a Maria, comercial 1 da Clínica Blue.',
+    'Cada item é uma SITUAÇÃO de WhatsApp, não uma pergunta teórica. Inclua: nome da lead, idade aproximada, cidade, de onde veio (anúncio, indicação, retorno) e a FALA dela entre aspas.',
+    'As 3 opções são o que a Maria responderia em seguida — linguagem natural de WhatsApp, sem códigos de atalho visíveis nas opções.',
+    'ops[certa] = decisão de elite (regras de ouro, A-R-A, valor antes de preço, 1 pergunta, cidade define protocolo, nunca promete diagnóstico/resultado/plano).',
+    'Uma opção é "quase" (intenção certa, execução fraca) e outra é erro grave (preço cedo, promessa, 3 perguntas, não seco, pular acolhimento).',
+    'Varie os 8 temas, sem repetir: preço na primeira mensagem; fora do RJ; plano de saúde; "está caro"; lead que sumiu; véspera sem termo; agenda SP; Goiânia fechada; medo de pele irregular; lead de anúncio quente.',
+    'Valores oficiais: consulta R$ 1.800 ou 2× R$ 900; retorno R$ 900; cirurgia faixa R$ 50–150 mil; Dr. Leonardo R$ 900; particular, sem plano.',
+    'Formato: array JSON de 8 objetos {cat, p, ops:[3 strings], certa:0|1|2, explica}.',
+    'cat = rótulo curto da etapa. p = a situação completa. explica = 1 a 2 frases dizendo POR QUE a certa conduz e o que a errada quebra.',
+    'Não invente valores, hospitais ou técnicas fora do playbook. Não use markdown.'
+  ].join('\n');
+
+  async function gerarSituacoesIA(){
+    const extra = 'Você é o coach de treino da Maria. Seja específico, humano e fiel ao playbook da Blue.';
+    const dados = await window.GeminiBlue.perguntarJSON(
+      SIT_PROMPT + '\nSemente de variedade: ' + Date.now() + ' / ' + Math.random().toString(36).slice(2,8),
+      [], extra, { temperature: 0.95, maxOutputTokens: 3200 }
+    );
+    const lista = Array.isArray(dados) ? dados : (dados.perguntas || dados.quiz || []);
+    return lista.filter(q=>q && q.p && Array.isArray(q.ops) && q.ops.length>=3 && typeof q.certa==='number');
+  }
+
+  async function comecaSaber(comIA){
+    saberIA = !!comIA;
+    saberChave = comIA ? 'situacoes' : 'saber';
+    saberTotal = comIA ? SIT_RODADAS : SABER_RODADAS;
     saberRodada = 0;
+    $('saberTitulo').textContent = comIA ? 'Quiz de situações 🎯' : 'Quiz Blue 🧠';
     mostra('palcoSaber');
-    proximaSaber();
+    $('saberCat').textContent = comIA ? 'IA montando as situações…' : 'Conhecimento';
+    $('saberPergunta').textContent = comIA ? 'Cada partida é única. Um segundo — estou criando 8 conversas novas para você.' : '';
+    $('saberOpcoes').innerHTML = '';
+    $('saberFeedback').className='feedback';
+    $('saberProxima').style.display='none';
+    $('saberRodada').textContent = '…';
+
+    if(!comIA){
+      saberFila = embaralha(window.QUIZ_BLUE);
+      proximaSaber();
+      return;
+    }
+
+    const status = await window.GeminiBlue.statusConexao();
+    if(status==='off'){
+      $('saberPergunta').textContent = 'O quiz de situações precisa da IA. Configure a chave ou publique no Netlify com GEMINI_API_KEY.';
+      $('saberOpcoes').innerHTML = '<button class="btn" type="button" id="sitChave">Configurar chave e tentar de novo</button>';
+      document.getElementById('sitChave').addEventListener('click', ()=>{ window.GeminiBlue.configurarChave(); comecaSaber(true); });
+      return;
+    }
+    try{
+      const geradas = await gerarSituacoesIA();
+      if(geradas.length<4) throw new Error('A IA devolveu poucas perguntas.');
+      saberFila = embaralha(geradas);
+      saberTotal = Math.min(SIT_RODADAS, saberFila.length);
+      proximaSaber();
+    }catch(err){
+      $('saberCat').textContent = 'Fallback · banco local';
+      $('saberPergunta').textContent = 'Não consegui gerar situações novas agora (' + err.message + '). Vou usar o quiz clássico para você não perder o treino.';
+      saberFila = embaralha(window.QUIZ_BLUE);
+      saberTotal = SABER_RODADAS;
+      saberChave = 'saber';
+      setTimeout(proximaSaber, 1600);
+    }
   }
   function proximaSaber(){
     saberTravado = false;
-    if(saberRodada>=SABER_RODADAS || saberFila.length===0){
-      terminaJogo('saber', pontos, 'pts', 'Quiz Blue concluído!',
-        'Precisão de ' + Math.round(100*acertos/Math.max(1,tentativas)) + '%. Esse conhecimento é o que te deixa segura em qualquer pergunta — sem precisar de script. Repita até cravar 100%.', '🧠');
+    if(saberRodada>=saberTotal || saberFila.length===0){
+      terminaJogo(saberChave, pontos, 'pts',
+        saberIA ? 'Situações concluídas!' : 'Quiz Blue concluído!',
+        'Precisão de ' + Math.round(100*acertos/Math.max(1,tentativas)) + '%.' +
+        (saberIA
+          ? ' Cada rodada foi uma conversa inédita — no WhatsApp real, a lead nunca se repete. Jogue de novo para treinar outros nomes, cidades e objeções.'
+          : ' Esse conhecimento é o que te deixa segura em qualquer pergunta — sem precisar de script. Repita até cravar 100%.'),
+        saberIA ? '🎯' : '🧠');
       return;
     }
     const q = saberFila.pop();
     saberRodada++;
-    $('saberRodada').textContent = saberRodada + ' / ' + SABER_RODADAS;
-    $('saberCat').textContent = q.cat;
+    $('saberRodada').textContent = saberRodada + ' / ' + saberTotal;
+    $('saberCat').textContent = q.cat || (saberIA ? 'Situação real' : 'Conhecimento');
     $('saberPergunta').textContent = q.p;
     $('saberFeedback').className='feedback';
     $('saberProxima').style.display='none';
@@ -583,14 +657,14 @@
           const bonus = Math.min(sequencia,5)*5;
           ganhaPontos(25+bonus);
           fb.className='feedback on ok';
-          fb.innerHTML='<b>Exato! +'+(25+bonus)+' pts.</b> '+q.explica;
+          fb.innerHTML='<b>Exato! +'+(25+bonus)+' pts.</b> '+(q.explica||'');
         } else {
           sequencia=0;
           b.classList.add('errada');
           Array.from(box.children).forEach(o=>{ if(ordem[Array.from(box.children).indexOf(o)].certa) o.classList.add('certa'); });
           atualizaPlacar();
           fb.className='feedback on erro';
-          fb.innerHTML='<b>Não é essa.</b> '+q.explica;
+          fb.innerHTML='<b>Essa esfriaria a lead.</b> '+(q.explica||'');
         }
         $('saberProxima').style.display='inline-block';
       });
@@ -865,20 +939,28 @@
   $('seqProxima').addEventListener('click', proximaSeq);
 
   /* ================= SIMULADOR DE LEAD (Gemini) ================= */
-  const PERFIS = [
-    'Você é a Camila, 34 anos, do Rio de Janeiro. Veio de um anúncio do Instagram. Sente as pernas pesadas há anos, já fez muita dieta sem resultado e desconfia de lipedema, mas nunca teve diagnóstico. É insegura e pergunta o preço cedo demais.',
+  const PERFIS_RESERVA = [
+    'Você é a Camila, 34 anos, de Niterói (RJ). Veio de um anúncio do Instagram. Sente as pernas pesadas há anos, já fez muita dieta sem resultado e desconfia de lipedema, mas nunca teve diagnóstico. É insegura e pergunta o preço cedo demais.',
     'Você é a Renata, 41 anos, de Recife. Já tem diagnóstico de lipedema. Está muito interessada mas assustada com a distância e com o valor. Vai dizer "está caro" pelo menos uma vez.',
     'Você é a Juliana, 29 anos, de São Paulo. Pesquisou várias clínicas e está comparando. Pergunta se aceita plano de saúde e quanto custa a cirurgia. Se for bem atendida, pede para agendar.',
     'Você é a Patrícia, 38 anos, de Goiânia. Conversou com a clínica há um mês e sumiu. Está retornando agora, meio fria, dizendo "vou pensar" com frequência. Só avança se sentir acolhimento de verdade.'
   ];
   const SIM_REGRAS = [
-    'MODO SIMULADOR DE TREINO: você vai interpretar UMA lead conversando por WhatsApp com a Maria (comercial da Clínica Blue).',
+    'MODO SIMULADOR DE TREINO: você interpreta UMA lead conversando por WhatsApp com a Maria, comercial 1 da Clínica Blue (Dr. Rafael Erthal, lipedema, LipeDefinition®).',
     'Responda SEMPRE neste formato JSON puro, sem markdown, sem crase: {"lead":"mensagem da lead","coach":"análise curta da última resposta da Maria","nota":0}',
-    '- "lead": a próxima mensagem da lead (natural, humana, curta como no WhatsApp, com a personalidade do perfil).',
-    '- "coach": 1 a 2 frases avaliando a última resposta da Maria segundo o playbook (acolheu? terminou com pergunta? valor antes de preço? personalizou? respeitou o compliance?). Na primeira mensagem, deixe "".',
-    '- "nota": de 0 a 10 para a última resposta da Maria (0 na primeira mensagem).',
-    'A lead NÃO conhece os atalhos — reaja apenas ao conteúdo. Se a Maria citar um atalho entre colchetes, trate como se ela tivesse enviado o texto daquele modelo.',
-    'Nunca saia do personagem no campo "lead".'
+    '- "lead": próxima mensagem da lead. Curta como WhatsApp real (1 a 4 linhas), com a personalidade do perfil. Use o nome dela quando fizer sentido. Erros leves de digitação são ok. Não pareça robô.',
+    '- "coach": 1 a 2 frases, falando com a Maria. Cite a regra quebrada ou acertada (ex.: pulou acolhimento, preço sem valor, não terminou com pergunta, não perguntou a cidade, prometeu resultado, A-R-A perfeito). Na primeira mensagem, deixe "".',
+    '- "nota": 0 a 10 para a última resposta da Maria (0 na primeira mensagem). Seja rigoroso: 9–10 só se personalizou o nome, respeitou a ordem da jornada e fechou com UMA pergunta.',
+    'A lead NÃO conhece atalhos. Se a Maria citar um código entre colchetes, trate como se ela tivesse enviado aquele modelo, já personalizado.',
+    'Reaja ao que ela realmente escreveu. Se ela mandar preço cedo, pressione um pouco. Se acolher bem, abra a dor. Se errar a cidade/protocolo, estranhe.',
+    'Nunca saia do personagem no campo "lead". Nunca invente valores diferentes do playbook se a Maria perguntar.'
+  ].join('\n');
+
+  const PERFIL_PROMPT = [
+    'Crie UM perfil inédito de lead para o simulador da Maria.',
+    'JSON: {"perfil":"parágrafo em 2ª pessoa (Você é a …) com nome, idade, cidade, origem (anúncio/indicação/retorno), diagnóstico ou não, dor principal, medo escondido, como ela fala no WhatsApp, e o que vai objetar.","nome":"primeiro nome","cidade":"cidade","gancho":"1 linha do que ela vai mandar primeiro"}',
+    'Varie cidade (RJ, Niterói, Recife, SP, Goiânia, Fortaleza, BH, interior, exterior/inglês às vezes). Não repita Camila/Renata/Juliana/Patrícia.',
+    'Semente: '
   ].join('\n');
 
   let simHist=[], simTrocas=0, simNotas=[], simPerfil='';
@@ -902,11 +984,24 @@
     }
   }
 
+  async function inventaPerfil(){
+    try{
+      const dados = await window.GeminiBlue.perguntarJSON(
+        PERFIL_PROMPT + Date.now() + ' / ' + Math.random().toString(36).slice(2,7),
+        [], 'Você cria pacientes realistas para treino. Fiel ao playbook da Blue.',
+        { temperature: 1, maxOutputTokens: 700 }
+      );
+      if(dados && dados.perfil) return dados;
+    }catch(e){}
+    const reserva = PERFIS_RESERVA[Math.floor(Math.random()*PERFIS_RESERVA.length)];
+    return { perfil: reserva, nome: '', cidade: '', gancho: '' };
+  }
+
   async function comecaSim(){
     mostra('palcoSim');
     $('simChat').innerHTML='';
     simHist=[]; simTrocas=0; simNotas=[];
-    simPerfil = PERFIS[Math.floor(Math.random()*PERFIS.length)];
+    simPerfil = '';
     $('simTrocas').textContent='0 / 8 mensagens';
     const status = await window.GeminiBlue.statusConexao();
     if(status==='off'){
@@ -915,15 +1010,24 @@
       simBolha('Sem conexão com a IA por enquanto. Configure a chave ali embaixo e recomece o simulador. 💙','coach');
       return;
     }
-    $('simAviso').textContent='Responda com as suas palavras. Se quiser usar um atalho, cite entre colchetes: [empatia] + sua mensagem personalizada.';
+    $('simAviso').textContent='Responda com as suas palavras, como no WhatsApp. Cada lead é nova — não existe script único.';
     const digitando = simBolha('A lead está entrando na conversa…','digitando');
     try{
+      const ficha = await inventaPerfil();
+      simPerfil = ficha.perfil;
+      const abertura = ficha.gancho
+        ? 'Comece a conversa. A PRIMEIRA mensagem da lead no WhatsApp deve ser fiel a este gancho, em tom humano: ' + ficha.gancho
+        : 'Comece a conversa: envie a PRIMEIRA mensagem da lead chegando no WhatsApp da clínica.';
       const resposta = await window.GeminiBlue.perguntar(
-        'Comece a conversa: envie a PRIMEIRA mensagem da lead chegando no WhatsApp da clínica.',
-        [], SIM_REGRAS + '\n\nPERFIL DA LEAD:\n' + simPerfil
+        abertura,
+        [], SIM_REGRAS + '\n\nPERFIL DA LEAD:\n' + simPerfil,
+        { temperature: 0.9, maxOutputTokens: 700 }
       );
       digitando.remove();
       const r = parseSim(resposta);
+      if(ficha.nome || ficha.cidade){
+        simBolha('Ficha rápida: ' + [ficha.nome, ficha.cidade].filter(Boolean).join(' · ') + ' — atenda como se fosse agora, no WhatsApp.', 'coach');
+      }
       simBolha(r.lead, 'lead');
       simHist.push({eu:'(início da conversa)', bot:resposta});
     }catch(err){
@@ -944,7 +1048,8 @@
     try{
       const resposta = await window.GeminiBlue.perguntar(
         'Resposta da Maria: ' + txt,
-        simHist, SIM_REGRAS + '\n\nPERFIL DA LEAD:\n' + simPerfil
+        simHist, SIM_REGRAS + '\n\nPERFIL DA LEAD:\n' + simPerfil,
+        { temperature: 0.85, maxOutputTokens: 800 }
       );
       digitando.remove();
       const r = parseSim(resposta);

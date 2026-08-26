@@ -2,19 +2,19 @@
    A chave fica na variável de ambiente GEMINI_API_KEY (Site settings →
    Environment variables no painel do Netlify) e nunca chega ao navegador.
 
-   Resiliência: tenta uma escada de modelos. Se um estourar a cota (429)
-   ou estiver indisponível (404/503), passa para o próximo automaticamente. */
+   Chaves novas do AI Studio começam com AQ. e autenticam pelo header
+   x-goog-api-key. Modelos 2.x/2.5 não estão mais disponíveis para contas novas. */
 
 const MODELOS = [
-  "gemini-2.5-flash-lite", // maior limite por minuto no plano gratuito
-  "gemini-2.5-flash",
-  "gemini-2.0-flash",
+  "gemini-3.5-flash-lite",
+  "gemini-3.6-flash",
+  "gemini-flash-latest",
+  "gemini-flash-lite-latest",
 ];
 
 exports.handler = async (event) => {
-  const chave = process.env.GEMINI_API_KEY;
+  const chave = (process.env.GEMINI_API_KEY || "").trim();
 
-  // GET = verificação de saúde usada pelo front para saber se o proxy existe
   if (event.httpMethod === "GET") {
     if (!chave) {
       return { statusCode: 503, body: "GEMINI_API_KEY não configurada no Netlify." };
@@ -40,10 +40,13 @@ exports.handler = async (event) => {
   for (const modelo of MODELOS) {
     try {
       const r = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent?key=${chave}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": chave,
+          },
           body: JSON.stringify(corpo),
         }
       );
@@ -57,7 +60,6 @@ exports.handler = async (event) => {
           body: texto,
         };
       }
-      // 429 (cota), 404 (modelo indisponível) e 503 (sobrecarga): tenta o próximo modelo
       if (r.status !== 429 && r.status !== 404 && r.status !== 503) {
         return { statusCode: r.status, headers: { "Content-Type": "application/json" }, body: texto };
       }
